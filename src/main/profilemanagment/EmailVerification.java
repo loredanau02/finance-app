@@ -1,4 +1,4 @@
-package main.profile_managment;
+package main.profilemanagment;
 
 public class EmailVerification {
     

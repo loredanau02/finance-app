@@ -1,6 +1,7 @@
-package main;
+// javac src/Main.java src/main/profilemanagment/*.java
+// java Main
 
-import main.profile_managment.Profile;
+import main.profilemanagment.Profile;
 
 public class Main {
     public static void main(String[] args) {
