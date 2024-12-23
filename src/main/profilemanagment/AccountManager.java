@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class AccountManager {
     private Map<String, Profile> accounts;
 
     public AccountManager() {
         this.accounts = new HashMap<>();
+        loadAccountsFromCSV();
     }
 
     public boolean registerAccount(String username, String password, String email, String backupEmail) {
@@ -43,6 +46,25 @@ public class AccountManager {
                   .append("\n");
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the CSV file: " + e.getMessage());
+        }
+    }
+
+    private void loadAccountsFromCSV() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("credentials.csv"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    String username = data[0];
+                    String password = data[1];
+                    String email = data[2];
+                    String backupEmail = data[3];
+                    Profile profile = new Profile(username, password, email, backupEmail);
+                    accounts.put(username, profile);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading accounts from the CSV file: " + e.getMessage());
         }
     }
 } 
