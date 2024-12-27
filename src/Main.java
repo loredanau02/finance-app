@@ -1,14 +1,15 @@
-// javac -d out src/Main.java src/main/profilemanagment/*.java
+// javac -d out src/Main.java src/main/profilemanagment/*.java src/main/supportcentre/*.java
 // java src/Main.java
 
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
+import main.supportcentre.SupportCentreManager;
 import java.util.Scanner;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static AccountManager accountManager = new AccountManager();
-
+    private static SupportCentreManager supportCentreManager = new SupportCentreManager();
     public static void main(String[] args) {
         while (true) {
             displayMenu();
@@ -24,6 +25,9 @@ public class Main {
                 case 3:
                     System.out.println("Goodbye!");
                     return;
+                case 4:
+                    createSupportTicket();
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
@@ -35,6 +39,7 @@ public class Main {
         System.out.println("1. Register new account");
         System.out.println("2. Login");
         System.out.println("3. Exit");
+        System.out.println("4. Create Support Ticket");
         System.out.print("Enter your choice: ");
     }
 
@@ -79,4 +84,18 @@ public class Main {
             System.out.println("Invalid username or password.");
         }
     }
+
+    private static void createSupportTicket() {
+        System.out.println("\n=== Create Support Ticket ===");
+        System.out.print("Enter User ID: ");
+        String userId = scanner.nextLine();
+        System.out.print("Enter Category: ");
+        String category = scanner.nextLine();
+        System.out.print("Enter Description: ");
+        String description = scanner.nextLine();
+    
+        String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
+        System.out.println("Support ticket created with ID: " + ticketId);
+    }
+    
 }
