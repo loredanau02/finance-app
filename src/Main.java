@@ -1,11 +1,11 @@
-// javac -d out src/Main.java src/main/profilemanagment/*.java
-// java src/Main.java
+
 
 import main.portfolio.Asset;
 import main.portfolio.Portfolio;
 import main.portfolio.PortfolioManager;
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
+import main.portfolio.*;
 
 import java.util.Map;
 import java.util.Scanner;

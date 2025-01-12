@@ -1,5 +1,8 @@
 package main.profilemanagment;
 
+// javac -d out src/Main.java src/main/profilemanagment/*.java
+// java src/Main.java
+
 public class Profile {
     private String username;
     private String password;
