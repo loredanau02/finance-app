@@ -229,3 +229,4 @@ public class Main {
         String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
         System.out.println("Support ticket created with ID: " + ticketId);
     }
+}
