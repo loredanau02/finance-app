@@ -1,4 +1,5 @@
-package com.notification;
+package main.notifications;
+
 
 public class Notification {
     // Unique ID for the notification
