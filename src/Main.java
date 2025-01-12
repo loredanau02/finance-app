@@ -4,6 +4,7 @@ import main.portfolio.PortfolioManager;
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
 import main.supportcentre.SupportCentreManager;
+
 import main.portfolio.*;
 
 import java.util.Map;
@@ -45,6 +46,9 @@ public class Main {
                     loginGuard(Main::removeAsset);
                     break;
                 case 8:
+                    loginGuard(Main::createSupportTicket);
+                    break;
+                case 9:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -212,10 +216,8 @@ public class Main {
             System.out.println("Your portfolio is currently empty.");
         }
     }
-}
 
-
-    private static void createSupportTicket() {
+      private static void createSupportTicket() {
         System.out.println("\n=== Create Support Ticket ===");
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
@@ -227,5 +229,3 @@ public class Main {
         String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
         System.out.println("Support ticket created with ID: " + ticketId);
     }
-    
-}
