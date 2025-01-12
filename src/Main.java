@@ -1,10 +1,10 @@
-
-
 import main.portfolio.Asset;
 import main.portfolio.Portfolio;
 import main.portfolio.PortfolioManager;
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
+import main.supportcentre.SupportCentreManager;
+
 import main.portfolio.*;
 
 import java.util.Map;
@@ -14,6 +14,7 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static AccountManager accountManager = new AccountManager();
     private static PortfolioManager portfolioManager = new PortfolioManager();
+    private static SupportCentreManager supportCentreManager = new SupportCentreManager();
 
     private static String sessionUsername;
 
@@ -45,6 +46,9 @@ public class Main {
                     loginGuard(Main::removeAsset);
                     break;
                 case 8:
+                    loginGuard(Main::createSupportTicket);
+                    break;
+                case 9:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -52,6 +56,7 @@ public class Main {
             }
         }
     }
+
 
     private static void displayMenu() {
         System.out.println("\n=== Account Management System ===");
@@ -62,7 +67,8 @@ public class Main {
         System.out.println("5. Get asset");
         System.out.println("6. Update asset");
         System.out.println("7. Remove asset");
-        System.out.println("8. Exit");
+        System.out.println("8. Create Support Ticket");
+        System.out.println("9. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -210,4 +216,16 @@ public class Main {
             System.out.println("Your portfolio is currently empty.");
         }
     }
-}
+
+      private static void createSupportTicket() {
+        System.out.println("\n=== Create Support Ticket ===");
+        System.out.print("Enter User ID: ");
+        String userId = scanner.nextLine();
+        System.out.print("Enter Category: ");
+        String category = scanner.nextLine();
+        System.out.print("Enter Description: ");
+        String description = scanner.nextLine();
+    
+        String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
+        System.out.println("Support ticket created with ID: " + ticketId);
+    }
