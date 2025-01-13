@@ -3,7 +3,7 @@ import main.portfolio.Portfolio;
 import main.portfolio.PortfolioManager;
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
-import main.supportcentre.SupportCentreManager;
+import main.supportcenter.SupportCentreManager;
 
 import main.portfolio.*;
 
