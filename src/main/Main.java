@@ -19,6 +19,7 @@ public class Main {
     private static NotificationService notificationService = new NotificationService();
 
     private static String sessionUsername;
+    private static boolean isLoggedIn = false;
 
     public static void main(String[] args) {
         // Adding some sample notifications
@@ -32,31 +33,67 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    registerAccount();
+                    if (!isLoggedIn) {
+                        registerAccount();
+                    } else {
+                        System.out.println("You are already logged in.");
+                    }
                     break;
                 case 2:
-                    login();
+                    if (!isLoggedIn) {
+                        login();
+                    } else {
+                        System.out.println("You are already logged in.");
+                    }
                     break;
                 case 3:
-                    loginGuard(Main::addAsset);
+                    if (isLoggedIn) {
+                        addAsset();
+                    } else {
+                        System.out.println("Please log in to add assets.");
+                    }
                     break;
                 case 4:
-                    loginGuard(Main::getAssets);
+                    if (isLoggedIn) {
+                        getAssets();
+                    } else {
+                        System.out.println("Please log in to view assets.");
+                    }
                     break;
                 case 5:
-                    loginGuard(Main::getAsset);
+                    if (isLoggedIn) {
+                        getAsset();
+                    } else {
+                        System.out.println("Please log in to get asset details.");
+                    }
                     break;
                 case 6:
-                    loginGuard(Main::updateAsset);
+                    if (isLoggedIn) {
+                        updateAsset();
+                    } else {
+                        System.out.println("Please log in to update assets.");
+                    }
                     break;
                 case 7:
-                    loginGuard(Main::removeAsset);
+                    if (isLoggedIn) {
+                        removeAsset();
+                    } else {
+                        System.out.println("Please log in to remove assets.");
+                    }
                     break;
                 case 8:
-                    loginGuard(Main::createSupportTicket);
+                    if (isLoggedIn) {
+                        createSupportTicket();
+                    } else {
+                        System.out.println("Please log in to create a support ticket.");
+                    }
                     break;
                 case 9:
-                    manageNotifications();
+                    if (isLoggedIn) {
+                        manageNotifications();
+                    } else {
+                        System.out.println("Please log in to manage notifications.");
+                    }
                     break;
                 case 10:
                     System.out.println("Goodbye!");
@@ -69,15 +106,18 @@ public class Main {
 
     private static void displayMenu() {
         System.out.println("\n=== Account Management System ===");
-        System.out.println("1. Register new account");
-        System.out.println("2. Login");
-        System.out.println("3. Add asset");
-        System.out.println("4. Get assets");
-        System.out.println("5. Get asset");
-        System.out.println("6. Update asset");
-        System.out.println("7. Remove asset");
-        System.out.println("8. Create Support Ticket");
-        System.out.println("9. Manage Notifications");
+        if (!isLoggedIn) {
+            System.out.println("1. Register new account");
+            System.out.println("2. Login");
+        } else {
+            System.out.println("3. Add asset");
+            System.out.println("4. Get assets");
+            System.out.println("5. Get asset");
+            System.out.println("6. Update asset");
+            System.out.println("7. Remove asset");
+            System.out.println("8. Create Support Ticket");
+            System.out.println("9. Manage Notifications");
+        }
         System.out.println("10. Exit");
         System.out.print("Enter your choice: ");
     }
@@ -119,6 +159,7 @@ public class Main {
         if (profile != null) {
             sessionUsername = username;
             portfolioManager.AddUser(username);
+            isLoggedIn = true;
             System.out.println("Login successful!");
             System.out.println(profile.toString());
         } else {
@@ -126,12 +167,10 @@ public class Main {
         }
     }
 
-    private static void loginGuard(Runnable action) {
-        if (sessionUsername == null) {
-            System.out.println("Unauthorized. Please login.");
-        } else {
-            action.run();
-        }
+    private static void logout() {
+        isLoggedIn = false;
+        sessionUsername = null;
+        System.out.println("You have been logged out.");
     }
 
     private static void addAsset() {
