@@ -7,22 +7,32 @@ import main.supportcenter.SupportCentreManager;
 
 import main.portfolio.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import main.notification.Notification;
+import main.notification.NotificationService;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static AccountManager accountManager = new AccountManager();
     private static PortfolioManager portfolioManager = new PortfolioManager();
     private static SupportCentreManager supportCentreManager = new SupportCentreManager();
+    private static NotificationService notificationService = new NotificationService();
 
     private static String sessionUsername;
 
     public static void main(String[] args) {
+        // Adding some sample notifications
+        notificationService.broadcastNotification("Welcome to the Finance App!");
+        notificationService.addNotification("Quick Tip: Diversify your investments.");
+        notificationService.addNotification("Your support ticket #1234 is now marked as 'Delivered'.");
+
         while (true) {
             displayMenu();
             int choice = getChoice();
-            
+
             switch (choice) {
                 case 1:
                     registerAccount();
@@ -49,6 +59,9 @@ public class Main {
                     loginGuard(Main::createSupportTicket);
                     break;
                 case 9:
+                    manageNotifications();
+                    break;
+                case 10:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -56,7 +69,6 @@ public class Main {
             }
         }
     }
-
 
     private static void displayMenu() {
         System.out.println("\n=== Account Management System ===");
@@ -68,7 +80,8 @@ public class Main {
         System.out.println("6. Update asset");
         System.out.println("7. Remove asset");
         System.out.println("8. Create Support Ticket");
-        System.out.println("9. Exit");
+        System.out.println("9. Manage Notifications");
+        System.out.println("10. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -217,7 +230,7 @@ public class Main {
         }
     }
 
-      private static void createSupportTicket() {
+    private static void createSupportTicket() {
         System.out.println("\n=== Create Support Ticket ===");
         System.out.print("Enter User ID: ");
         String userId = scanner.nextLine();
@@ -225,8 +238,48 @@ public class Main {
         String category = scanner.nextLine();
         System.out.print("Enter Description: ");
         String description = scanner.nextLine();
-    
+
         String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
         System.out.println("Support ticket created with ID: " + ticketId);
+    }
+
+    // Notification centre
+    private static void manageNotifications() {
+        while (true) {
+            System.out.println("\nNotifications:");
+            List<Notification> notifications = notificationService.getNotifications();
+            if (notifications.isEmpty()) {
+                System.out.println("No notifications available.");
+                break;
+            }
+
+            for (Notification notification : notifications) {
+                System.out.println("ID: " + notification.getId() + " | Message: " + notification.getMessage() + " | Status: " + (notification.isRead() ? "Read" : "Unread"));
+            }
+
+            System.out.println("\nOptions:");
+            System.out.println("1. Mark a notification as read");
+            System.out.println("2. Delete a notification");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = getChoice();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter the ID of the notification to mark as read: ");
+                    String markId = scanner.nextLine();
+                    notificationService.markNotificationAsRead(markId);
+                    break;
+                case 2:
+                    System.out.print("Enter the ID of the notification to delete: ");
+                    String deleteId = scanner.nextLine();
+                    notificationService.deleteNotification(deleteId);
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
     }
 }
