@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import main.notification.Notification;
-import main.notification.NotificationService;
+import main.notifications.Notification;
+import main.notifications.NotificationService;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
