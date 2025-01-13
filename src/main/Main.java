@@ -96,6 +96,20 @@ public class Main {
                     }
                     break;
                 case 10:
+                    if (isLoggedIn) {
+                        updateUserInfo();
+                    } else {
+                        System.out.println("Please log in to update your information.");
+                    }
+                    break;
+                case 11:
+                    if (isLoggedIn) {
+                        displayUserProfile();
+                    } else {
+                        System.out.println("Please log in to view your profile.");
+                    }
+                    break;
+                case 12:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -117,8 +131,10 @@ public class Main {
             System.out.println("7. Remove asset");
             System.out.println("8. Create Support Ticket");
             System.out.println("9. Manage Notifications");
+            System.out.println("10. Update Personal Information");
+            System.out.println("11. View Profile");
         }
-        System.out.println("10. Exit");
+        System.out.println("12. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -134,6 +150,13 @@ public class Main {
         System.out.println("\n=== Registration ===");
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
+        
+        // Check if username already exists
+        if (accountManager.isUsernameTaken(username)) {
+            System.out.println("Username already exists. Please choose a different username.");
+            return;
+        }
+        
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
         System.out.print("Enter email: ");
@@ -144,7 +167,7 @@ public class Main {
         if (accountManager.registerAccount(username, password, email, backupEmail)) {
             System.out.println("Registration successful!");
         } else {
-            System.out.println("Username already exists. Please try again.");
+            System.out.println("Registration failed. Please try again.");
         }
     }
 
@@ -161,7 +184,6 @@ public class Main {
             portfolioManager.AddUser(username);
             isLoggedIn = true;
             System.out.println("Login successful!");
-            System.out.println(profile.toString());
         } else {
             System.out.println("Invalid username or password.");
         }
@@ -316,6 +338,118 @@ public class Main {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
+        }
+    }
+
+    private static void displayUserProfile() {
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            System.out.println("\nUser Profile Details:");
+            System.out.printf("Username: %s%n", profile.getUsername());
+            System.out.printf("Email: %s%n", profile.getEmail());
+            System.out.printf("Backup Email: %s%n", profile.getBackupEmail());
+            System.out.printf("Email Verified: %s%n", profile.isEmailVerified());
+        } else {
+            System.out.println("Profile not found.");
+        }
+    }
+
+    private static void updateUserInfo() {
+        while (true) {
+            System.out.println("\n=== Update Personal Information ===");
+            System.out.println("1. Update Username");
+            System.out.println("2. Update Password");
+            System.out.println("3. Update Email");
+            System.out.println("4. Update Backup Email");
+            System.out.println("5. Exit to Main Menu");
+            System.out.print("Choose an option: ");
+
+            int choice = getChoice();
+            switch (choice) {
+                case 1:
+                    updateUsername();
+                    break;
+                case 2:
+                    updatePassword();
+                    break;
+                case 3:
+                    updateEmail();
+                    break;
+                case 4:
+                    updateBackupEmail();
+                    break;
+                case 5:
+                    return; // Exit to main menu
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void updateUsername() {
+        System.out.print("Enter new username: ");
+        String newUsername = scanner.nextLine();
+        
+        // Check if the new username is different from the current one
+        if (newUsername.equals(sessionUsername)) {
+            System.out.println("New username is same as current username.");
+            return;
+        }
+        
+        // Check if the new username is already taken
+        if (accountManager.isUsernameTaken(newUsername)) {
+            System.out.println("Username already exists. Please choose a different username.");
+            return;
+        }
+        
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            String oldUsername = sessionUsername;
+            profile.setUsername(newUsername);
+            accountManager.updateProfileInCSV(profile, oldUsername);
+            sessionUsername = newUsername; // Update session username
+            System.out.println("Username updated successfully.");
+        } else {
+            System.out.println("Profile not found.");
+        }
+    }
+
+    private static void updatePassword() {
+        System.out.print("Enter new password: ");
+        String newPassword = scanner.nextLine();
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            profile.setPassword(newPassword);
+            accountManager.updateProfileInCSV(profile, sessionUsername);
+            System.out.println("Password updated successfully.");
+        } else {
+            System.out.println("Profile not found.");
+        }
+    }
+
+    private static void updateEmail() {
+        System.out.print("Enter new email: ");
+        String newEmail = scanner.nextLine();
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            profile.setEmail(newEmail);
+            accountManager.updateProfileInCSV(profile, sessionUsername);
+            System.out.println("Email updated successfully.");
+        } else {
+            System.out.println("Profile not found.");
+        }
+    }
+
+    private static void updateBackupEmail() {
+        System.out.print("Enter new backup email: ");
+        String newBackupEmail = scanner.nextLine();
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            profile.setBackupEmail(newBackupEmail);
+            accountManager.updateProfileInCSV(profile, sessionUsername);
+            System.out.println("Backup email updated successfully.");
+        } else {
+            System.out.println("Profile not found.");
         }
     }
 }

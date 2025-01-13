@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountManager {
     private Map<String, Profile> accounts;
@@ -66,5 +68,36 @@ public class AccountManager {
         } catch (IOException e) {
             System.out.println("An error occurred while loading accounts from the CSV file: " + e.getMessage());
         }
+    }
+
+    public Profile getProfile(String username) {
+        return accounts.get(username);
+    }
+
+    public void updateProfileInCSV(Profile profile, String oldUsername) {
+        accounts.remove(oldUsername);
+        accounts.put(profile.getUsername(), profile);
+        
+        try {
+            List<Profile> profiles = new ArrayList<>(accounts.values());
+            try (FileWriter writer = new FileWriter("credentials.csv")) {
+                for (Profile p : profiles) {
+                    writer.append(p.getUsername())
+                          .append(",")
+                          .append(p.getPassword())
+                          .append(",")
+                          .append(p.getEmail())
+                          .append(",")
+                          .append(p.getBackupEmail())
+                          .append("\n");
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while updating the CSV file: " + e.getMessage());
+        }
+    }
+
+    public boolean isUsernameTaken(String username) {
+        return accounts.containsKey(username);
     }
 } 

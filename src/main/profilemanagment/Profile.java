@@ -24,6 +24,22 @@ public class Profile {
     public boolean isEmailVerified() { return isEmailVerified; }
     public String getBackupEmail() { return backupEmail; }
     
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBackupEmail(String backupEmail) {
+        this.backupEmail = backupEmail;
+    }
+
     @Override
     public String toString() {
         return "User Profile Details:\n" +
