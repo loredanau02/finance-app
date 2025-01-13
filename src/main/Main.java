@@ -110,6 +110,13 @@ public class Main {
                     }
                     break;
                 case 12:
+                    if (isLoggedIn) {
+                        deleteAccount();
+                    } else {
+                        System.out.println("Please log in to delete your account.");
+                    }
+                    break;
+                case 13:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -133,8 +140,9 @@ public class Main {
             System.out.println("9. Manage Notifications");
             System.out.println("10. Update Personal Information");
             System.out.println("11. View Profile");
+            System.out.println("12. Delete Account");
         }
-        System.out.println("12. Exit");
+        System.out.println("13. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -450,6 +458,25 @@ public class Main {
             System.out.println("Backup email updated successfully.");
         } else {
             System.out.println("Profile not found.");
+        }
+    }
+
+    private static void deleteAccount() {
+        System.out.println("\n=== Delete Account ===");
+        System.out.println("Are you sure you want to delete your account? This action cannot be undone.");
+        System.out.print("Enter 'yes' to confirm or 'no' to cancel: ");
+        String confirmation = scanner.nextLine().toLowerCase();
+
+        if (confirmation.equals("yes")) {
+            if (accountManager.deleteAccount(sessionUsername)) {
+                System.out.println("Account deleted successfully.");
+                isLoggedIn = false;
+                sessionUsername = null;
+            } else {
+                System.out.println("Failed to delete account. Please try again.");
+            }
+        } else {
+            System.out.println("Account deletion cancelled.");
         }
     }
 }

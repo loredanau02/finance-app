@@ -100,4 +100,32 @@ public class AccountManager {
     public boolean isUsernameTaken(String username) {
         return accounts.containsKey(username);
     }
+
+    public boolean deleteAccount(String username) {
+        if (!accounts.containsKey(username)) {
+            return false;
+        }
+        
+        accounts.remove(username);
+        
+        try {
+            List<Profile> profiles = new ArrayList<>(accounts.values());
+            try (FileWriter writer = new FileWriter("credentials.csv")) {
+                for (Profile p : profiles) {
+                    writer.append(p.getUsername())
+                          .append(",")
+                          .append(p.getPassword())
+                          .append(",")
+                          .append(p.getEmail())
+                          .append(",")
+                          .append(p.getBackupEmail())
+                          .append("\n");
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            System.out.println("An error occurred while updating the CSV file: " + e.getMessage());
+            return false;
+        }
+    }
 } 
