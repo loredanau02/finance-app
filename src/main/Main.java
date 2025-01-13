@@ -4,15 +4,12 @@ import main.portfolio.PortfolioManager;
 import main.profilemanagment.Profile;
 import main.profilemanagment.AccountManager;
 import main.supportcenter.SupportCentreManager;
-
-import main.portfolio.*;
+import main.notifications.Notification;
+import main.notifications.NotificationService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
-import main.notifications.Notification;
-import main.notifications.NotificationService;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);

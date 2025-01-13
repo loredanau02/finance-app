@@ -1,7 +1,7 @@
 package main.profilemanagment;
 
-// javac -d out src/Main.java src/main/profilemanagment/*.java
-// java src/Main.java
+// mvn clean compile
+// java -cp target/classes main.Main
 
 public class Profile {
     private String username;
