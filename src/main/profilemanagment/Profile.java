@@ -9,6 +9,7 @@ public class Profile {
     private String email;
     private boolean isEmailVerified;
     private String backupEmail;
+    private String verificationCode;
 
     public Profile(String username, String password, String email, String backupEmail) {
         this.username = username;
@@ -16,6 +17,7 @@ public class Profile {
         this.email = email;
         this.backupEmail = backupEmail;
         this.isEmailVerified = false;
+        this.verificationCode = generateVerificationCode();
     }
 
     public String getUsername() { return username; }
@@ -23,6 +25,7 @@ public class Profile {
     public String getEmail() { return email; }
     public boolean isEmailVerified() { return isEmailVerified; }
     public String getBackupEmail() { return backupEmail; }
+    public String getVerificationCode() { return verificationCode; }
     
     public void setUsername(String username) {
         this.username = username;
@@ -38,6 +41,15 @@ public class Profile {
 
     public void setBackupEmail(String backupEmail) {
         this.backupEmail = backupEmail;
+    }
+
+    public void setEmailVerified(boolean verified) {
+        this.isEmailVerified = verified;
+    }
+
+    private String generateVerificationCode() {
+        // Generate a 6-digit code
+        return String.format("%06d", new java.util.Random().nextInt(1000000));
     }
 
     @Override

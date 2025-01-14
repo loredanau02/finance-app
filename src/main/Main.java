@@ -6,6 +6,7 @@ import main.profilemanagment.AccountManager;
 import main.supportcenter.SupportCentreManager;
 import main.notifications.Notification;
 import main.notifications.NotificationService;
+import main.profilemanagment.EmailVerification;
 
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,13 @@ public class Main {
                     }
                     break;
                 case 13:
+                    if (isLoggedIn) {
+                        verifyEmail();
+                    } else {
+                        System.out.println("Please log in to verify your email.");
+                    }
+                    break;
+                case 14:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -141,8 +149,9 @@ public class Main {
             System.out.println("10. Update Personal Information");
             System.out.println("11. View Profile");
             System.out.println("12. Delete Account");
+            System.out.println("13. Verify Email");
         }
-        System.out.println("13. Exit");
+        System.out.println("14. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -156,24 +165,39 @@ public class Main {
 
     private static void registerAccount() {
         System.out.println("\n=== Registration ===");
+        
+        // Username check
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
-        
-        // Check if username already exists
         if (accountManager.isUsernameTaken(username)) {
             System.out.println("Username already exists. Please choose a different username.");
             return;
         }
         
+        // Password
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
+        
+        // Email check
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
+        if (accountManager.isEmailTaken(email)) {
+            System.out.println("This email is already registered. Please use a different email.");
+            return;
+        }
+        
+        // Backup email check
         System.out.print("Enter backup email: ");
         String backupEmail = scanner.nextLine();
-
+        if (accountManager.isBackupEmailTaken(backupEmail)) {
+            System.out.println("This backup email is already in use. Please use a different email.");
+            return;
+        }
+        
+        // If all checks pass, proceed with registration
         if (accountManager.registerAccount(username, password, email, backupEmail)) {
             System.out.println("Registration successful!");
+            System.out.println("You can verify your email after logging in.");
         } else {
             System.out.println("Registration failed. Please try again.");
         }
@@ -477,6 +501,30 @@ public class Main {
             }
         } else {
             System.out.println("Account deletion cancelled.");
+        }
+    }
+
+    private static void verifyEmail() {
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile.isEmailVerified()) {
+            System.out.println("Your email is already verified.");
+            return;
+        }
+
+        System.out.println("\n=== Email Verification ===");
+        System.out.println("A verification code has been sent to your email.");
+        
+        // Send verification code
+        EmailVerification.sendVerificationCode(profile.getEmail(), profile.getVerificationCode());
+        
+        System.out.print("Enter the verification code: ");
+        String code = scanner.nextLine();
+        
+        if (EmailVerification.verifyEmail(profile, code)) {
+            accountManager.updateProfileInCSV(profile, sessionUsername);
+            System.out.println("Email verified successfully!");
+        } else {
+            System.out.println("Invalid verification code.");
         }
     }
 }

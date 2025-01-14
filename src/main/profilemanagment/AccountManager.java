@@ -45,6 +45,10 @@ public class AccountManager {
                   .append(profile.getEmail())
                   .append(",")
                   .append(profile.getBackupEmail())
+                  .append(",")
+                  .append(profile.getVerificationCode())
+                  .append(",")
+                  .append(String.valueOf(profile.isEmailVerified()))
                   .append("\n");
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the CSV file: " + e.getMessage());
@@ -56,17 +60,16 @@ public class AccountManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 4) {
-                    String username = data[0];
-                    String password = data[1];
-                    String email = data[2];
-                    String backupEmail = data[3];
-                    Profile profile = new Profile(username, password, email, backupEmail);
-                    accounts.put(username, profile);
+                if (data.length >= 6) {
+                    Profile profile = new Profile(data[0], data[1], data[2], data[3]);
+                    if (Boolean.parseBoolean(data[5])) {
+                        profile.setEmailVerified(true);
+                    }
+                    accounts.put(data[0], profile);
                 }
             }
         } catch (IOException e) {
-            System.out.println("An error occurred while loading accounts from the CSV file: " + e.getMessage());
+            System.out.println("An error occurred while loading accounts: " + e.getMessage());
         }
     }
 
@@ -89,6 +92,10 @@ public class AccountManager {
                           .append(p.getEmail())
                           .append(",")
                           .append(p.getBackupEmail())
+                          .append(",")
+                          .append(p.getVerificationCode())
+                          .append(",")
+                          .append(String.valueOf(p.isEmailVerified()))
                           .append("\n");
                 }
             }
@@ -127,5 +134,35 @@ public class AccountManager {
             System.out.println("An error occurred while updating the CSV file: " + e.getMessage());
             return false;
         }
+    }
+
+    public boolean verifyEmail(String username, String code) {
+        Profile profile = accounts.get(username);
+        if (profile != null && profile.getVerificationCode().equals(code)) {
+            profile.setEmailVerified(true);
+            updateProfileInCSV(profile, username);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isEmailTaken(String email) {
+        for (Profile profile : accounts.values()) {
+            if (profile.getEmail().equalsIgnoreCase(email) || 
+                profile.getBackupEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBackupEmailTaken(String backupEmail) {
+        for (Profile profile : accounts.values()) {
+            if (profile.getEmail().equalsIgnoreCase(backupEmail) || 
+                profile.getBackupEmail().equalsIgnoreCase(backupEmail)) {
+                return true;
+            }
+        }
+        return false;
     }
 } 
