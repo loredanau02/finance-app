@@ -40,113 +40,81 @@ public class Main {
                 case 1:
                     if (!isLoggedIn) {
                         registerAccount();
-                    } else {
-                        System.out.println("You are already logged in.");
                     }
                     break;
                 case 2:
                     if (!isLoggedIn) {
                         login();
-                    } else {
-                        System.out.println("You are already logged in.");
                     }
                     break;
                 case 3:
-                    if (isLoggedIn) {
-                        addAsset();
-                    } else {
-                        System.out.println("Please log in to add assets.");
+                    if (!isLoggedIn) {
+                        accountManager.displayPublicUsers();
                     }
                     break;
                 case 4:
                     if (isLoggedIn) {
-                        getAssets();
-                    } else {
-                        System.out.println("Please log in to view assets.");
+                        addAsset();
                     }
                     break;
                 case 5:
                     if (isLoggedIn) {
-                        getAsset();
-                    } else {
-                        System.out.println("Please log in to get asset details.");
+                        getAssets();
                     }
                     break;
                 case 6:
                     if (isLoggedIn) {
-                        updateAsset();
-                    } else {
-                        System.out.println("Please log in to update assets.");
+                        getAsset();
                     }
                     break;
                 case 7:
                     if (isLoggedIn) {
-                        removeAsset();
-                    } else {
-                        System.out.println("Please log in to remove assets.");
+                        updateAsset();
                     }
                     break;
                 case 8:
                     if (isLoggedIn) {
-                        createSupportTicket();
-                    } else {
-                        System.out.println("Please log in to create a support ticket.");
+                        removeAsset();
                     }
                     break;
                 case 9:
                     if (isLoggedIn) {
-                        manageNotifications();
-                    } else {
-                        System.out.println("Please log in to manage notifications.");
+                        createSupportTicket();
                     }
                     break;
                 case 10:
                     if (isLoggedIn) {
-                        updateUserInfo();
-                    } else {
-                        System.out.println("Please log in to update your information.");
+                        manageNotifications();
                     }
                     break;
                 case 11:
                     if (isLoggedIn) {
-                        displayUserProfile();
-                    } else {
-                        System.out.println("Please log in to view your profile.");
+                        updateUserInfo();
                     }
                     break;
                 case 12:
                     if (isLoggedIn) {
-                        deleteAccount();
-                    } else {
-                        System.out.println("Please log in to delete your account.");
+                        displayUserProfile();
                     }
                     break;
                 case 13:
                     if (isLoggedIn) {
-                        verifyEmail();
-                    } else {
-                        System.out.println("Please log in to verify your email.");
+                        deleteAccount();
                     }
                     break;
                 case 14:
                     if (isLoggedIn) {
-                        toggleAccountPrivacy();
-                    } else {
-                        System.out.println("Please log in to change privacy settings.");
+                        verifyEmail();
                     }
                     break;
                 case 15:
                     if (isLoggedIn) {
-                        handlePostsManagement();
-                    } else {
-                        System.out.println("Please log in to manage posts.");
+                        toggleAccountPrivacy();
                     }
                     break;
                 case 16:
                     if (isLoggedIn) {
-                        handlePostsViewing();
-                    } else {
-                        System.out.println("Please log in to view and comment on posts.");
+                        handlePostsManagement();
                     }
                     break;
                 case 17:
@@ -163,23 +131,24 @@ public class Main {
         if (!isLoggedIn) {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
+            System.out.println("3. View Public Users");
+            System.out.println("17. Exit");
         } else {
-            System.out.println("3. Add asset");
-            System.out.println("4. Get assets");
-            System.out.println("5. Get asset");
-            System.out.println("6. Update asset");
-            System.out.println("7. Remove asset");
-            System.out.println("8. Create Support Ticket");
-            System.out.println("9. Manage Notifications");
-            System.out.println("10. Update Personal Information");
-            System.out.println("11. View Profile");
-            System.out.println("12. Delete Account");
-            System.out.println("13. Verify Email");
-            System.out.println("14. Toggle Account Privacy");
-            System.out.println("15. Manage Posts");
-            System.out.println("16. View & Comment Posts");
+            System.out.println("4. Add asset");
+            System.out.println("5. Get assets");
+            System.out.println("6. Get asset");
+            System.out.println("7. Update asset");
+            System.out.println("8. Remove asset");
+            System.out.println("9. Create Support Ticket");
+            System.out.println("10. Manage Notifications");
+            System.out.println("11. Update Personal Information");
+            System.out.println("12. View Profile");
+            System.out.println("13. Delete Account");
+            System.out.println("14. Verify Email");
+            System.out.println("15. Toggle Account Privacy");
+            System.out.println("16. Manage Posts");
+            System.out.println("17. Exit");
         }
-        System.out.println("17. Exit");
         System.out.print("Enter your choice: ");
     }
 

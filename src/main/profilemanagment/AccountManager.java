@@ -168,4 +168,22 @@ public class AccountManager {
         }
         return false;
     }
+
+    public void displayPublicUsers() {
+        System.out.println("\n=== Public Users ===");
+        boolean foundPublicUsers = false;
+        
+        for (Profile profile : accounts.values()) {
+            if (profile.isPublic()) {
+                System.out.println("Username: " + profile.getUsername());
+                System.out.println("Email: " + profile.getEmail());
+                System.out.println("-------------------");
+                foundPublicUsers = true;
+            }
+        }
+        
+        if (!foundPublicUsers) {
+            System.out.println("No public users found.");
+        }
+    }
 } 
