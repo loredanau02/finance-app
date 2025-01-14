@@ -7,6 +7,8 @@ import main.supportcenter.SupportCentreManager;
 import main.notifications.Notification;
 import main.notifications.NotificationService;
 import main.profilemanagment.EmailVerification;
+import main.posts.Posts;
+import main.posts.ViewPosts;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,8 @@ public class Main {
     private static PortfolioManager portfolioManager = new PortfolioManager();
     private static SupportCentreManager supportCentreManager = new SupportCentreManager();
     private static NotificationService notificationService = new NotificationService();
+    private static Posts postsManager = new Posts();
+    private static ViewPosts viewPosts = new ViewPosts(postsManager);
 
     private static String sessionUsername;
     private static boolean isLoggedIn = false;
@@ -98,33 +102,47 @@ public class Main {
                     break;
                 case 10:
                     if (isLoggedIn) {
+                        handlePostsManagement();
+                    } else {
+                        System.out.println("Please log in to manage posts.");
+                    }
+                    break;
+                case 11:
+                    if (isLoggedIn) {
+                        handlePostsViewing();
+                    } else {
+                        System.out.println("Please log in to view and comment on posts.");
+                    }
+                    break;
+                case 12:
+                    if (isLoggedIn) {
                         updateUserInfo();
                     } else {
                         System.out.println("Please log in to update your information.");
                     }
                     break;
-                case 11:
+                case 13:
                     if (isLoggedIn) {
                         displayUserProfile();
                     } else {
                         System.out.println("Please log in to view your profile.");
                     }
                     break;
-                case 12:
+                case 14:
                     if (isLoggedIn) {
                         deleteAccount();
                     } else {
                         System.out.println("Please log in to delete your account.");
                     }
                     break;
-                case 13:
+                case 15:
                     if (isLoggedIn) {
                         verifyEmail();
                     } else {
                         System.out.println("Please log in to verify your email.");
                     }
                     break;
-                case 14:
+                case 16:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -150,8 +168,10 @@ public class Main {
             System.out.println("11. View Profile");
             System.out.println("12. Delete Account");
             System.out.println("13. Verify Email");
+            System.out.println("10. Manage Posts");
+            System.out.println("11. View & Comment Posts");
         }
-        System.out.println("14. Exit");
+        System.out.println("16. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -526,5 +546,17 @@ public class Main {
         } else {
             System.out.println("Invalid verification code.");
         }
+    }
+
+    private static void handlePostsManagement() {
+        System.out.println("\n=== Posts Management ===");
+        System.out.println("Logged in as: " + sessionUsername);
+        postsManager.handlePostsMenu(scanner, sessionUsername);
+    }
+
+    private static void handlePostsViewing() {
+        System.out.println("\n=== Posts Viewing & Commenting ===");
+        System.out.println("Logged in as: " + sessionUsername);
+        viewPosts.handleViewMenu(scanner, sessionUsername);
     }
 }
