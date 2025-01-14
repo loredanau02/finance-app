@@ -102,44 +102,44 @@ public class Main {
                     break;
                 case 10:
                     if (isLoggedIn) {
-                        handlePostsManagement();
-                    } else {
-                        System.out.println("Please log in to manage posts.");
-                    }
-                    break;
-                case 11:
-                    if (isLoggedIn) {
-                        handlePostsViewing();
-                    } else {
-                        System.out.println("Please log in to view and comment on posts.");
-                    }
-                    break;
-                case 12:
-                    if (isLoggedIn) {
                         updateUserInfo();
                     } else {
                         System.out.println("Please log in to update your information.");
                     }
                     break;
-                case 13:
+                case 11:
                     if (isLoggedIn) {
                         displayUserProfile();
                     } else {
                         System.out.println("Please log in to view your profile.");
                     }
                     break;
-                case 14:
+                case 12:
                     if (isLoggedIn) {
                         deleteAccount();
                     } else {
                         System.out.println("Please log in to delete your account.");
                     }
                     break;
-                case 15:
+                case 13:
                     if (isLoggedIn) {
                         verifyEmail();
                     } else {
                         System.out.println("Please log in to verify your email.");
+                    }
+                    break;
+                case 14:
+                    if (isLoggedIn) {
+                        handlePostsManagement();
+                    } else {
+                        System.out.println("Please log in to manage posts.");
+                    }
+                    break;
+                case 15:
+                    if (isLoggedIn) {
+                        handlePostsViewing();
+                    } else {
+                        System.out.println("Please log in to view and comment on posts.");
                     }
                     break;
                 case 16:
@@ -168,8 +168,8 @@ public class Main {
             System.out.println("11. View Profile");
             System.out.println("12. Delete Account");
             System.out.println("13. Verify Email");
-            System.out.println("10. Manage Posts");
-            System.out.println("11. View & Comment Posts");
+            System.out.println("14. Manage Posts");
+            System.out.println("15. View & Comment Posts");
         }
         System.out.println("16. Exit");
         System.out.print("Enter your choice: ");
