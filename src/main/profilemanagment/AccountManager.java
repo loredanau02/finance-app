@@ -49,6 +49,8 @@ public class AccountManager {
                   .append(profile.getVerificationCode())
                   .append(",")
                   .append(String.valueOf(profile.isEmailVerified()))
+                  .append(",")
+                  .append(String.valueOf(profile.isPublic()))
                   .append("\n");
         } catch (IOException e) {
             System.out.println("An error occurred while writing to the CSV file: " + e.getMessage());
@@ -60,11 +62,10 @@ public class AccountManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length >= 6) {
+                if (data.length >= 7) {
                     Profile profile = new Profile(data[0], data[1], data[2], data[3]);
-                    if (Boolean.parseBoolean(data[5])) {
-                        profile.setEmailVerified(true);
-                    }
+                    profile.setEmailVerified(Boolean.parseBoolean(data[5]));
+                    profile.setPublic(Boolean.parseBoolean(data[6]));
                     accounts.put(data[0], profile);
                 }
             }
@@ -96,6 +97,8 @@ public class AccountManager {
                           .append(p.getVerificationCode())
                           .append(",")
                           .append(String.valueOf(p.isEmailVerified()))
+                          .append(",")
+                          .append(String.valueOf(p.isPublic()))
                           .append("\n");
                 }
             }

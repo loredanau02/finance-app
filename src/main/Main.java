@@ -130,19 +130,26 @@ public class Main {
                     break;
                 case 14:
                     if (isLoggedIn) {
+                        toggleAccountPrivacy();
+                    } else {
+                        System.out.println("Please log in to change privacy settings.");
+                    }
+                    break;
+                case 15:
+                    if (isLoggedIn) {
                         handlePostsManagement();
                     } else {
                         System.out.println("Please log in to manage posts.");
                     }
                     break;
-                case 15:
+                case 16:
                     if (isLoggedIn) {
                         handlePostsViewing();
                     } else {
                         System.out.println("Please log in to view and comment on posts.");
                     }
                     break;
-                case 16:
+                case 17:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -168,10 +175,11 @@ public class Main {
             System.out.println("11. View Profile");
             System.out.println("12. Delete Account");
             System.out.println("13. Verify Email");
-            System.out.println("14. Manage Posts");
-            System.out.println("15. View & Comment Posts");
+            System.out.println("14. Toggle Account Privacy");
+            System.out.println("15. Manage Posts");
+            System.out.println("16. View & Comment Posts");
         }
-        System.out.println("16. Exit");
+        System.out.println("17. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -545,6 +553,26 @@ public class Main {
             System.out.println("Email verified successfully!");
         } else {
             System.out.println("Invalid verification code.");
+        }
+    }
+
+    private static void toggleAccountPrivacy() {
+        System.out.println("\n=== Account Privacy Settings ===");
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            System.out.println("Current status: " + (profile.isPublic() ? "Public" : "Private"));
+            System.out.println("1. Set to Public");
+            System.out.println("2. Set to Private");
+            System.out.print("Choose an option: ");
+            
+            int choice = getChoice();
+            boolean newPrivacySetting = choice == 1;
+            
+            profile.setPublic(newPrivacySetting);
+            accountManager.updateProfileInCSV(profile, sessionUsername);
+            System.out.println("Account privacy updated to: " + (newPrivacySetting ? "Public" : "Private"));
+        } else {
+            System.out.println("Profile not found.");
         }
     }
 

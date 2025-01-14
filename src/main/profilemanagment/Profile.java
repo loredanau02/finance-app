@@ -10,6 +10,7 @@ public class Profile {
     private boolean isEmailVerified;
     private String backupEmail;
     private String verificationCode;
+    private boolean isPublic;
 
     public Profile(String username, String password, String email, String backupEmail) {
         this.username = username;
@@ -18,6 +19,7 @@ public class Profile {
         this.backupEmail = backupEmail;
         this.isEmailVerified = false;
         this.verificationCode = generateVerificationCode();
+        this.isPublic = true;
     }
 
     public String getUsername() { return username; }
@@ -45,6 +47,14 @@ public class Profile {
 
     public void setEmailVerified(boolean verified) {
         this.isEmailVerified = verified;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     private String generateVerificationCode() {
