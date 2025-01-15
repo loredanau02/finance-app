@@ -1,3 +1,5 @@
+package main;
+
 import main.portfolio.Asset;
 import main.portfolio.Portfolio;
 import main.portfolio.PortfolioManager;
