@@ -1,7 +1,5 @@
 package main.profilemanagment;
 
-// mvn clean compile
-// java -cp target/classes main.Main
 
 public class Profile {
     private String username;

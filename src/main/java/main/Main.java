@@ -230,15 +230,13 @@ public class Main {
             return;
         }
         
-        // Backup email check
         System.out.print("Enter backup email: ");
         String backupEmail = scanner.nextLine();
         if (accountManager.isBackupEmailTaken(backupEmail)) {
             System.out.println("This backup email is already in use. Please use a different email.");
             return;
         }
-        
-        // If all checks pass, proceed with registration
+    
         if (accountManager.registerAccount(username, password, email, backupEmail)) {
             System.out.println("Registration successful!");
             System.out.println("You can verify your email after logging in.");
