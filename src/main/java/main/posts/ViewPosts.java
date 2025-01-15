@@ -48,7 +48,7 @@ public class ViewPosts {
                     viewPostsByLabel(scanner, username);
                     break;
                 case "4":
-                    displayAllLabels();
+                    displayAllLabels(username);
                     break;
                 case "5":
                     addComment(scanner);
@@ -74,8 +74,7 @@ public class ViewPosts {
     }
 
     private void viewPostsByLabel(Scanner scanner, String username) {
-        // First display all available labels
-        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts();
+        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(username);
         Set<String> allLabels = new HashSet<>();
         
         // Collect all unique labels
@@ -109,7 +108,6 @@ public class ViewPosts {
             // Filter and display posts with the selected label
             List<Posts.Post> filteredPosts = allPosts.stream()
                 .filter(post -> post.getLabels().contains(selectedLabel))
-                .filter(post -> !post.isPrivate() || post.getAuthor().equals(username))
                 .collect(Collectors.toList());
             
             System.out.println("\n=== Posts with label '" + selectedLabel + "' ===");
@@ -131,19 +129,20 @@ public class ViewPosts {
         System.out.print("Enter post ID to comment on: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            Posts.Post post = postsManager.getPost(postId);
+            System.out.print("Enter your username: ");
+            String author = scanner.nextLine();
+            
+            Posts.Post post = postsManager.getPost(postId, author);
             
             if (post != null) {
                 System.out.print("Enter your comment: ");
                 String content = scanner.nextLine();
-                System.out.print("Enter your username: ");
-                String author = scanner.nextLine();
                 
                 Comment newComment = new Comment(commentIdCounter++, content, author);
                 comments.computeIfAbsent(postId, k -> new ArrayList<>()).add(newComment);
                 System.out.println("Comment added successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to comment on it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
@@ -154,8 +153,16 @@ public class ViewPosts {
         System.out.print("Enter post ID: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            ArrayList<Comment> postComments = comments.get(postId);
+            System.out.print("Enter your username: ");
+            String username = scanner.nextLine();
             
+            Posts.Post post = postsManager.getPost(postId, username);
+            if (post == null) {
+                System.out.println("Post not found or you don't have permission to view it.");
+                return;
+            }
+            
+            ArrayList<Comment> postComments = comments.get(postId);
             if (postComments != null && !postComments.isEmpty()) {
                 System.out.println("\nComments for Post " + postId + ":");
                 for (Comment comment : postComments) {
@@ -176,17 +183,15 @@ public class ViewPosts {
     }
 
     private void displayAllPosts(String currentUser) {
-        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts();
+        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(currentUser);
         if (allPosts.isEmpty()) {
             System.out.println("No posts available.");
             return;
         }
         
-        System.out.println("\n=== All Public Posts ===");
+        System.out.println("\n=== All Visible Posts ===");
         for (Posts.Post post : allPosts) {
-            if (!post.isPrivate() || post.getAuthor().equals(currentUser)) {
-                displayPost(post);
-            }
+            displayPost(post);
         }
     }
 
@@ -194,13 +199,16 @@ public class ViewPosts {
         System.out.print("Enter post ID: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            Posts.Post post = postsManager.getPost(postId);
+            System.out.print("Enter your username: ");
+            String username = scanner.nextLine();
+            
+            Posts.Post post = postsManager.getPost(postId, username);
             
             if (post != null) {
                 System.out.println("\n=== Post Details ===");
                 displayPost(post);
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to view it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
@@ -241,7 +249,7 @@ public class ViewPosts {
     }
 
     public void viewCommentsOnUserPosts(String author) {
-        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts();
+        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(author);
         boolean foundComments = false;
         
         System.out.println("\n=== Comments on " + author + "'s Posts ===");
@@ -266,11 +274,10 @@ public class ViewPosts {
         }
     }
 
-    private void displayAllLabels() {
-        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts();
+    private void displayAllLabels(String username) {
+        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(username);
         Set<String> allLabels = new HashSet<>();
         
-        // Collect all unique labels
         for (Posts.Post post : allPosts) {
             allLabels.addAll(post.getLabels());
         }
@@ -288,7 +295,7 @@ public class ViewPosts {
     }
 
     private void viewPrivatePosts(String username) {
-        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts();
+        ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(username);
         boolean foundPrivatePosts = false;
         
         System.out.println("\n=== My Private Posts ===");
@@ -308,7 +315,7 @@ public class ViewPosts {
         System.out.print("Enter post ID to toggle privacy: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            Posts.Post post = postsManager.getPost(postId);
+            Posts.Post post = postsManager.getPost(postId, username);
             
             if (post != null) {
                 if (!post.getAuthor().equals(username)) {
@@ -320,7 +327,7 @@ public class ViewPosts {
                 System.out.println("Post privacy updated. Post is now " + 
                     (post.isPrivate() ? "private" : "public") + ".");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to modify it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
