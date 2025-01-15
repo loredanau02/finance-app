@@ -33,7 +33,7 @@ public class PortfolioManagerTest {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("peter");
 
-        boolean result = portfolioManager.AddAsset("peter", "apple", 100.0f);
+        boolean result = portfolioManager.AddAsset("peter", "apple", 100.0f, 20.0f);
         assertTrue(result);
 
         Asset asset = portfolioManager.GetAsset("peter", "apple");
@@ -45,17 +45,34 @@ public class PortfolioManagerTest {
     public void testAddAsset_UserDoesNotExist() {
         PortfolioManager portfolioManager = new PortfolioManager();
 
-        boolean result = portfolioManager.AddAsset("bread", "apple", 100.0f);
+        boolean result = portfolioManager.AddAsset("bread", "apple", 100.0f, 20.0f);
         assertFalse(result);
+    }
+
+    @Test
+    public void testGetPrice_ExistingAsset() {
+        PortfolioManager portfolioManager = new PortfolioManager();
+        portfolioManager.AddUser("peter");
+
+        Float portfolio = portfolioManager.GetPrice("peter");
+        assertNotNull(portfolio);
+    }
+
+    @Test
+    public void testGetPrice_NonExistingAsset() {
+        PortfolioManager portfolioManager = new PortfolioManager();
+
+        Float portfolio = portfolioManager.GetPrice("non_user");
+        assertNull(portfolio);
     }
 
     @Test
     public void testAddAsset_AssetAlreadyExists() {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("peter");
-        portfolioManager.AddAsset("peter", "apple", 100.0f);
+        portfolioManager.AddAsset("peter", "apple", 100.0f, 20.0f);
 
-        boolean result = portfolioManager.AddAsset("peter", "apple", 150.0f);
+        boolean result = portfolioManager.AddAsset("peter", "apple", 150.0f, 20.0f);
         assertFalse(result);
 
         Asset asset = portfolioManager.GetAsset("peter", "apple");
@@ -66,7 +83,7 @@ public class PortfolioManagerTest {
     public void testUpdateAssetAmount_Success() {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("peter");
-        portfolioManager.AddAsset("peter", "google", 200.0f);
+        portfolioManager.AddAsset("peter", "google", 200.0f, 20.0f);
 
         boolean result = portfolioManager.UpdateAssetAmount("peter", "google", 250.0f);
         assertTrue(result);
@@ -99,7 +116,7 @@ public class PortfolioManagerTest {
     public void testGetAsset_Existing() {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("pedro");
-        portfolioManager.AddAsset("pedro", "google", 50.0f);
+        portfolioManager.AddAsset("pedro", "google", 50.0f, 20.0f);
 
         Asset asset = portfolioManager.GetAsset("pedro", "google");
         assertNotNull(asset);
@@ -127,9 +144,9 @@ public class PortfolioManagerTest {
     public void testGetAssets_ExistingUser() {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("peter");
-        portfolioManager.AddAsset("peter", "apple", 10.0f);
-        portfolioManager.AddAsset("peter", "google", 20.0f);
-        portfolioManager.AddAsset("peter", "microsoft", 5.0f);
+        portfolioManager.AddAsset("peter", "apple", 10.0f, 20.0f);
+        portfolioManager.AddAsset("peter", "google", 20.0f, 20.0f);
+        portfolioManager.AddAsset("peter", "microsoft", 5.0f, 20.0f);
 
         Map<String, Asset> assets = portfolioManager.GetAssets("peter");
         assertNotNull(assets);
@@ -151,7 +168,7 @@ public class PortfolioManagerTest {
     public void testRemoveAsset_Success() {
         PortfolioManager portfolioManager = new PortfolioManager();
         portfolioManager.AddUser("pedro");
-        portfolioManager.AddAsset("pedro", "google", 50.0f);
+        portfolioManager.AddAsset("pedro", "google", 50.0f, 20.0f);
 
         boolean result = portfolioManager.RemoveAsset("pedro", "google");
         assertTrue(result);
