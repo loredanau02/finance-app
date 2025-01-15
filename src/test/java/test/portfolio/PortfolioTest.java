@@ -13,7 +13,7 @@ public class PortfolioTest {
     public void testAddAsset_Success() {
         Portfolio portfolio = new Portfolio();
 
-        boolean result = portfolio.AddAsset("google", 10.0f);
+        boolean result = portfolio.AddAsset("google", 10.0f, 20.0f);
         assertTrue(result);
 
         Asset asset = portfolio.GetAsset("google");
@@ -25,8 +25,8 @@ public class PortfolioTest {
     public void testAddAsset_AddExistingAsset() {
         Portfolio portfolio = new Portfolio();
 
-        portfolio.AddAsset("google", 10.0f);
-        boolean result = portfolio.AddAsset("google", 15.0f);
+        portfolio.AddAsset("google", 10.0f, 20.0f);
+        boolean result = portfolio.AddAsset("google", 15.0f, 20.0f);
         assertFalse(result);
 
         Asset asset = portfolio.GetAsset("google");
@@ -37,7 +37,7 @@ public class PortfolioTest {
     public void testUpdateAssetAmount_Success() {
         Portfolio portfolio = new Portfolio();
 
-        portfolio.AddAsset("google", 10.0f);
+        portfolio.AddAsset("google", 10.0f, 20.0f);
         boolean result = portfolio.UpdateAssetAmount("google", 15.0f);
         assertTrue(result);
 
@@ -57,7 +57,7 @@ public class PortfolioTest {
     public void testGetAsset_Existing() {
         Portfolio portfolio = new Portfolio();
 
-        portfolio.AddAsset("google", 10.0f);
+        portfolio.AddAsset("google", 10.0f, 20.0f);
         Asset asset = portfolio.GetAsset("google");
 
         assertNotNull(asset);
@@ -76,9 +76,9 @@ public class PortfolioTest {
     public void testGetAssets() {
         Portfolio portfolio = new Portfolio();
 
-        portfolio.AddAsset("apple", 10.0f);
-        portfolio.AddAsset("google", 20.0f);
-        portfolio.AddAsset("microsoft", 5.0f);
+        portfolio.AddAsset("apple", 10.0f,20.0f);
+        portfolio.AddAsset("google", 20.0f, 20.0f);
+        portfolio.AddAsset("microsoft", 5.0f, 20.0f);
 
         Map<String, Asset> assets = portfolio.GetAssets();
 
@@ -97,7 +97,7 @@ public class PortfolioTest {
     public void testRemoveAsset_Success() {
         Portfolio portfolio = new Portfolio();
 
-        portfolio.AddAsset("apple", 100.0f);
+        portfolio.AddAsset("apple", 100.0f, 20.0f);
         boolean result = portfolio.RemoveAsset("apple");
         assertTrue(result);
 

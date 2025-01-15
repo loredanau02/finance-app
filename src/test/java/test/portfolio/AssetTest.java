@@ -5,19 +5,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AssetTest {
+    Float amount = 100.0f;
+    Float acquisitionPrice = 20.0f;
+
     @Test
     public void testAssetConstructor() {
-        Float amount = 100.0f;
-        Asset asset = new Asset(amount);
-
+        Asset asset = new Asset(amount, acquisitionPrice);
         assertNotNull(asset);
         assertEquals(amount, asset.GetAmount());
-        assertFalse(asset.IsFavourite());
+        assertEquals(acquisitionPrice, asset.GetAcquisitionPrice());
     }
 
     @Test
     public void testAssetSetAmount() {
-        Asset asset = new Asset(100.0f);
+        Asset asset = new Asset(amount, acquisitionPrice);
         assertNotNull(asset);
 
         asset.SetAmount(200.0f);
@@ -27,7 +28,7 @@ public class AssetTest {
 
     @Test
     public void testAssetSetFavourite() {
-        Asset asset = new Asset(100.0f);
+        Asset asset = new Asset(amount, acquisitionPrice);
         assertNotNull(asset);
         assertFalse(asset.IsFavourite());
 
@@ -38,7 +39,7 @@ public class AssetTest {
 
     @Test
     public void testAssetUnsetFavourite() {
-        Asset asset = new Asset(100.0f);
+        Asset asset = new Asset(amount, acquisitionPrice);
         assertNotNull(asset);
         asset.SetFavourite();
         assertTrue(asset.IsFavourite());

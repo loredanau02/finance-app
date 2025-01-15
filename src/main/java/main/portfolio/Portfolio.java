@@ -12,11 +12,11 @@ public class Portfolio {
         this.assets = new HashMap<>();
     }
 
-    public boolean AddAsset(String assetName, Float amount) {
+    public boolean AddAsset(String assetName, Float amount, Float acquisitionPrice) {
         if (assets.containsKey(assetName)) {
             return false;
         }
-        Asset asset = new Asset(amount);
+        Asset asset = new Asset(amount, acquisitionPrice);
         assets.put(assetName, asset);
         return true;
     }

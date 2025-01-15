@@ -5,9 +5,12 @@ import java.util.HashMap;
 public class Asset {
     private Float amount;
     private boolean isFavourite;
+    private Float acquisitionPrice;
 
-    public Asset(Float amount) {
+    public Asset(Float amount, Float acquisitionPrice) {
         this.amount = amount;
+        this.acquisitionPrice = acquisitionPrice;
+        this.isFavourite = false;
     }
 
     public Float GetAmount() {
@@ -16,7 +19,6 @@ public class Asset {
 
     public void SetAmount(Float amount) {
         this.amount = amount;
-        this.isFavourite = false;
     }
 
     public boolean IsFavourite() {
@@ -28,6 +30,10 @@ public class Asset {
     }
     public void UnsetFavourite() {
         this.isFavourite = false;
+    }
+
+    public Float GetAcquisitionPrice() {
+        return acquisitionPrice;
     }
 }
 

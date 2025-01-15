@@ -167,6 +167,9 @@ public class Main {
                     }
                     break;
                 case 27:
+                    getPrice();
+                    break;
+                case 28:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -181,7 +184,8 @@ public class Main {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
             System.out.println("22. View Public Users");
-            System.out.println("27. Exit");
+            System.out.println("27. Get Asset Price");
+            System.out.println("28. Exit");
         } else {
             System.out.println("3. Add asset");
             System.out.println("4. Get assets");
@@ -206,7 +210,8 @@ public class Main {
             System.out.println("24. Set Investment Goal");
             System.out.println("25. Mark Investment as Favourite");
             System.out.println("26. Remove Investment From Favourites");
-            System.out.println("27. Exit");
+            System.out.println("27. Get Asset Price");
+            System.out.println("28. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -296,13 +301,34 @@ public class Main {
             System.out.println("Invalid input. Please enter a numeric value for the asset amount.");
         }
 
+        Float acquisitionPrice = null;
+
+        System.out.print("Enter asset amount: ");
+        String acquisitionPriceStr = scanner.nextLine().trim();
+        try {
+            acquisitionPrice = Float.parseFloat(acquisitionPriceStr);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric value for the asset amount.");
+        }
+
         Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
 
-        if (portfolio.AddAsset(assetName, assetAmount)) {
+        if (portfolio.AddAsset(assetName, assetAmount, acquisitionPrice)) {
             System.out.println("Asset added successfully!");
         } else {
             System.out.println("Asset already exists!");
         }
+    }
+
+    private static void getPrice() {
+        System.out.println("\n=== Getting an asset price ===");
+        System.out.print("Enter asset name: ");
+        String assetName = scanner.nextLine();
+
+        Float price = portfolioManager.GetPrice(assetName);
+        System.out.println("\nAsset Details:");
+        System.out.printf("%-15s: %s%n", "Asset", assetName);
+        System.out.printf("%-15s: %.2f%n", "Amount", price);
     }
 
     private static void getAsset() {
