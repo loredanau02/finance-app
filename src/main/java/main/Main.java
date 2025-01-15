@@ -157,6 +157,16 @@ public class Main {
                     }
                     break;
                 case 25:
+                    if (isLoggedIn) {
+                        setFavourite();
+                    }
+                    break;
+                case 26:
+                    if (isLoggedIn) {
+                        unsetFavourite();
+                    }
+                    break;
+                case 27:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -171,7 +181,7 @@ public class Main {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
             System.out.println("22. View Public Users");
-            System.out.println("25. Exit");
+            System.out.println("27. Exit");
         } else {
             System.out.println("3. Add asset");
             System.out.println("4. Get assets");
@@ -194,7 +204,9 @@ public class Main {
             System.out.println("22. View Public Users");
             System.out.println("23. Add Personal Note");
             System.out.println("24. Set Investment Goal");
-            System.out.println("25. Exit");
+            System.out.println("25. Mark Investment as Favourite");
+            System.out.println("26. Remove Investment From Favourites");
+            System.out.println("27. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -747,6 +759,36 @@ public class Main {
             System.out.println("Investment goal set successfully!");
         } catch (IOException e) {
             System.err.println("Error saving investment goal: " + e.getMessage());
+        }
+    }
+
+    private static void setFavourite() {
+        System.out.println("\n=== Mark an asset as favourite ===");
+        System.out.print("Enter asset name: ");
+        String assetName = scanner.nextLine();
+
+        Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
+        Asset asset = portfolio.GetAsset(assetName);
+        if (asset != null) {
+            asset.SetFavourite();
+            System.out.println("Success!");
+        } else {
+            System.out.println("Asset not found.");
+        }
+    }
+
+    private static void unsetFavourite() {
+        System.out.println("\n=== Unmark an asset from favourites ===");
+        System.out.print("Enter asset name: ");
+        String assetName = scanner.nextLine();
+
+        Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
+        Asset asset = portfolio.GetAsset(assetName);
+        if (asset != null) {
+            asset.UnsetFavourite();
+            System.out.println("Success!");
+        } else {
+            System.out.println("Asset not found.");
         }
     }
 }
