@@ -1,4 +1,4 @@
-package test.main.portfolio;
+package test.portfolio;
 
 import main.portfolio.Asset;
 import org.junit.jupiter.api.Test;
