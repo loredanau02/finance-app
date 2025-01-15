@@ -23,4 +23,38 @@ public class ProfileTest {
         assertFalse(profile.isEmailVerified());
         assertTrue(profile.isPublic());
     }
+
+    @Test
+    public void testSettersAndGetters() {
+        Profile profile = new Profile("user", "pass", "email@example.com", "backup@example.com");
+        profile.setUsername("newUser");
+        profile.setPassword("newPass");
+        profile.setEmail("newEmail@example.com");
+        profile.setBackupEmail("newBackup@example.com");
+        profile.setEmailVerified(true);
+        profile.setPublic(false);
+
+        assertEquals("newUser", profile.getUsername());
+        assertEquals("newPass", profile.getPassword());
+        assertEquals("newEmail@example.com", profile.getEmail());
+        assertEquals("newBackup@example.com", profile.getBackupEmail());
+        assertTrue(profile.isEmailVerified());
+        assertFalse(profile.isPublic());
+    }
+
+    @Test
+    public void testEmailVerification() {
+        Profile profile = new Profile("user", "pass", "email@example.com", "backup@example.com");
+        assertFalse(profile.isEmailVerified());
+        profile.setEmailVerified(true);
+        assertTrue(profile.isEmailVerified());
+    }
+
+    @Test
+    public void testPublicProfile() {
+        Profile profile = new Profile("user", "pass", "email@example.com", "backup@example.com");
+        assertTrue(profile.isPublic());
+        profile.setPublic(false);
+        assertFalse(profile.isPublic());
+    }
 }
