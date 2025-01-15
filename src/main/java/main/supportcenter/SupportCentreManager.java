@@ -52,34 +52,22 @@ public class SupportCentreManager {
         }
     }
 
-      public boolean updateTicketStatus(String ticketId, String newStatus) {
-        List<String> tickets = new ArrayList<>();
+    public boolean updateTicketStatus(String ticketId, String newStatus) {
+        List<SupportTicket> tickets = loadTickets();
         boolean isUpdated = false;
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(TICKETS_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] fields = line.split(",");
-                if (fields[0].equals(ticketId)) {
-                    fields[5] = newStatus;
-                    isUpdated = true;
-                }
-                tickets.add(String.join(",", fields));
+    
+        for (SupportTicket ticket : tickets) {
+            if (ticket.getTicketId().equals(ticketId)) {
+                ticket.setStatus(newStatus);
+                isUpdated = true;
+                break;
             }
-        } catch (IOException e) {
-            System.err.println("Error reading tickets: " + e.getMessage());
         }
-
+    
         if (isUpdated) {
-            try (FileWriter writer = new FileWriter(TICKETS_FILE)) {
-                for (String ticket : tickets) {
-                    writer.write(ticket + "\n");
-                }
-            } catch (IOException e) {
-                System.err.println("Error updating ticket: " + e.getMessage());
-            }
+            saveAllTickets(tickets);
         }
-
+        
         return isUpdated;
     }
     
@@ -115,20 +103,22 @@ public class SupportCentreManager {
 
     public boolean rateTicket(String ticketId, String userId, int rating, String feedback) {
         if (rating < 1 || rating > 5) {
-            System.err.println("Rating must be between 1 and 5.");
             return false;
         }
     
-        String ratingsFile = "data/support_ticket_ratings.csv";
+        String ratingsFile = "data/ticket_ratings.csv";
         try (FileWriter writer = new FileWriter(ratingsFile, true)) {
-            writer.append(ticketId).append(",")
-                  .append(userId).append(",")
-                  .append(String.valueOf(rating)).append(",")
-                  .append(feedback == null ? "" : feedback).append("\n");
-            System.out.println("Thank you for your feedback!");
+            writer.append(ticketId)
+                 .append(",")
+                 .append(userId)
+                 .append(",")
+                 .append(String.valueOf(rating))
+                 .append(",")
+                 .append(feedback)
+                 .append("\n");
             return true;
         } catch (IOException e) {
-            System.err.println("Error saving rating: " + e.getMessage());
+            System.err.println("Error saving ticket rating: " + e.getMessage());
             return false;
         }
     }
@@ -160,23 +150,5 @@ public class SupportCentreManager {
         } catch (IOException e) {
             System.err.println("Error saving tickets to file: " + e.getMessage());
         }
-    }
-
-    public boolean updateTicketStatus(String ticketId, String newStatus) {
-        List<SupportTicket> tickets = loadTickets();
-        boolean isUpdated = false;
-    
-        for (SupportTicket ticket : tickets) {
-            if (ticket.getTicketId().equals(ticketId)) {
-                ticket.setStatus(newStatus);
-                isUpdated = true;
-                break;
-            }
-        }
-    
-        if (isUpdated) {
-            saveAllTickets(tickets);
-        }
-        return isUpdated;
     }
 }

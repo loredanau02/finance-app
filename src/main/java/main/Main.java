@@ -99,23 +99,6 @@ public class Main {
                     provideRealTimeAid();
                 }
                 break;
-                case "rate":
-                     System.out.println("Enter ticket ID:");
-                     String ticketId = scanner.nextLine();
-                     System.out.println("Enter your user ID:");
-                     String userId = scanner.nextLine();
-                     System.out.println("Rate your experience (1-5):");
-                     int rating = scanner.nextInt();
-                     scanner.nextLine();
-                     System.out.println("Optional feedback (press Enter to skip):");
-                     String feedback = scanner.nextLine();
-                     if (manager.rateTicket(ticketId, userId, rating, feedback)) {
-                        System.out.println("Rating submitted successfully.");
-                    } else {
-                        System.out.println("Failed to submit rating.");
-                    }
-                    break;
-
                 case 13:
                     if (isLoggedIn) {
                         manageNotifications();
@@ -123,22 +106,22 @@ public class Main {
                     break;
                 case 14:
                     if (isLoggedIn) {
-                        updateUserInfo();
+                        rateTicket();
                     }
                     break;
                 case 15:
                     if (isLoggedIn) {
-                        displayUserProfile();
+                        updateUserInfo();
                     }
                     break;
                 case 16:
                     if (isLoggedIn) {
-                        deleteAccount();
+                        displayUserProfile();
                     }
                     break;
                 case 17:
                     if (isLoggedIn) {
-                        verifyEmail();
+                        deleteAccount();
                     }
                     break;
                 case 18:
@@ -148,10 +131,15 @@ public class Main {
                     break;
                 case 19:
                     if (isLoggedIn) {
-                        handlePostsManagement();
+                        verifyEmail();
                     }
                     break;
                 case 20:
+                    if (isLoggedIn) {
+                        handlePostsManagement();
+                    }
+                    break;
+                case 21:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -166,7 +154,7 @@ public class Main {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
             System.out.println("3. View Public Users");
-            System.out.println("17. Exit");
+            System.out.println("20. Exit");
         } else {
             System.out.println("4. Add asset");
             System.out.println("5. Get assets");
@@ -176,14 +164,16 @@ public class Main {
             System.out.println("9. Create Support Ticket");
             System.out.println("10. Update Ticket Status");
             System.out.println("11. Answer Support Ticket");
-            System.out.println("12. Manage Notifications");
-            System.out.println("13. Update Personal Information");
-            System.out.println("14. View Profile");
-            System.out.println("15. Delete Account");
-            System.out.println("16. Verify Email");
-            System.out.println("17. Toggle Account Privacy");
-            System.out.println("18. Manage Posts");
-            System.out.println("19. Exit");
+            System.out.println("12. Provide Real-Time Aid");
+            System.out.println("13. Manage Notifications");
+            System.out.println("14. Rate Support Ticket");
+            System.out.println("15. Update Personal Information");
+            System.out.println("16. View Profile");
+            System.out.println("17. Delete Account");
+            System.out.println("18. Toggle Account Privacy");
+            System.out.println("19. Verify Email");
+            System.out.println("20. Manage Posts");
+            System.out.println("21. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -660,5 +650,23 @@ public class Main {
         System.out.println("\n=== Posts Viewing & Commenting ===");
         System.out.println("Logged in as: " + sessionUsername);
         viewPosts.handleViewMenu(scanner, sessionUsername);
+    }
+
+    private static void rateTicket() {
+        System.out.println("\n=== Rate Support Ticket ===");
+        System.out.println("Enter ticket ID:");
+        String ticketId = scanner.nextLine();
+        System.out.println("Enter your user ID:");
+        String userId = scanner.nextLine();
+        System.out.println("Rate your experience (1-5):");
+        int rating = Integer.parseInt(scanner.nextLine());
+        System.out.println("Optional feedback (press Enter to skip):");
+        String feedback = scanner.nextLine();
+        
+        if (supportCentreManager.rateTicket(ticketId, userId, rating, feedback)) {
+            System.out.println("Rating submitted successfully.");
+        } else {
+            System.out.println("Failed to submit rating.");
+        }
     }
 }
