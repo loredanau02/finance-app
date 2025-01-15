@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -150,6 +152,11 @@ public class Main {
                     }
                     break;
                 case 24:
+                    if (isLoggedIn) {
+                        setInvestmentGoal();
+                    }
+                    break;
+                case 25:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -164,7 +171,7 @@ public class Main {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
             System.out.println("22. View Public Users");
-            System.out.println("24. Exit");
+            System.out.println("25. Exit");
         } else {
             System.out.println("3. Add asset");
             System.out.println("4. Get assets");
@@ -186,7 +193,8 @@ public class Main {
             System.out.println("20. View Posts");
             System.out.println("22. View Public Users");
             System.out.println("23. Add Personal Note");
-            System.out.println("24. Exit");
+            System.out.println("24. Set Investment Goal");
+            System.out.println("25. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -704,6 +712,43 @@ public class Main {
             }
         } else {
             System.out.println("Profile not found.");
+        }
+    }
+
+    private static void setInvestmentGoal() {
+        Profile profile = accountManager.getProfile(sessionUsername);
+        int currentGoal = 0; // Default investment goal
+
+        // Check if the investment goal file exists
+        String investmentFile = "investment.csv";
+        try (BufferedReader reader = new BufferedReader(new FileReader(investmentFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values[0].equals(sessionUsername)) {
+                    currentGoal = Integer.parseInt(values[2]); // Get the current goal
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            // File may not exist yet, which is fine
+        }
+
+        System.out.println("Your current investment goal is: " + currentGoal);
+        System.out.print("Enter your new investment goal (whole number): ");
+        int newGoal = Integer.parseInt(scanner.nextLine());
+
+        // Save the new investment goal to the CSV file
+        try (FileWriter writer = new FileWriter(investmentFile, true)) {
+            writer.append(sessionUsername)
+                  .append(",")
+                  .append(profile.getEmail())
+                  .append(",")
+                  .append(String.valueOf(newGoal))
+                  .append("\n");
+            System.out.println("Investment goal set successfully!");
+        } catch (IOException e) {
+            System.err.println("Error saving investment goal: " + e.getMessage());
         }
     }
 }
