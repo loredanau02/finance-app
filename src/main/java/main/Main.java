@@ -86,40 +86,72 @@ public class Main {
                     break;
                 case 10:
                     if (isLoggedIn) {
-                        manageNotifications();
+                        updateTicketStatus();
                     }
                     break;
                 case 11:
                     if (isLoggedIn) {
-                        updateUserInfo();
+                        answerTicket();
                     }
                     break;
                 case 12:
-                    if (isLoggedIn) {
-                        displayUserProfile();
+                if (isLoggedIn) {
+                    provideRealTimeAid();
+                }
+                break;
+                case "rate":
+                     System.out.println("Enter ticket ID:");
+                     String ticketId = scanner.nextLine();
+                     System.out.println("Enter your user ID:");
+                     String userId = scanner.nextLine();
+                     System.out.println("Rate your experience (1-5):");
+                     int rating = scanner.nextInt();
+                     scanner.nextLine();
+                     System.out.println("Optional feedback (press Enter to skip):");
+                     String feedback = scanner.nextLine();
+                     if (manager.rateTicket(ticketId, userId, rating, feedback)) {
+                        System.out.println("Rating submitted successfully.");
+                    } else {
+                        System.out.println("Failed to submit rating.");
                     }
                     break;
+
                 case 13:
                     if (isLoggedIn) {
-                        deleteAccount();
+                        manageNotifications();
                     }
                     break;
                 case 14:
                     if (isLoggedIn) {
-                        verifyEmail();
+                        updateUserInfo();
                     }
                     break;
                 case 15:
                     if (isLoggedIn) {
-                        toggleAccountPrivacy();
+                        displayUserProfile();
                     }
                     break;
                 case 16:
                     if (isLoggedIn) {
-                        handlePostsManagement();
+                        deleteAccount();
                     }
                     break;
                 case 17:
+                    if (isLoggedIn) {
+                        verifyEmail();
+                    }
+                    break;
+                case 18:
+                    if (isLoggedIn) {
+                        toggleAccountPrivacy();
+                    }
+                    break;
+                case 19:
+                    if (isLoggedIn) {
+                        handlePostsManagement();
+                    }
+                    break;
+                case 20:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -142,14 +174,16 @@ public class Main {
             System.out.println("7. Update asset");
             System.out.println("8. Remove asset");
             System.out.println("9. Create Support Ticket");
-            System.out.println("10. Manage Notifications");
-            System.out.println("11. Update Personal Information");
-            System.out.println("12. View Profile");
-            System.out.println("13. Delete Account");
-            System.out.println("14. Verify Email");
-            System.out.println("15. Toggle Account Privacy");
-            System.out.println("16. Manage Posts");
-            System.out.println("17. Exit");
+            System.out.println("10. Update Ticket Status");
+            System.out.println("11. Answer Support Ticket");
+            System.out.println("12. Manage Notifications");
+            System.out.println("13. Update Personal Information");
+            System.out.println("14. View Profile");
+            System.out.println("15. Delete Account");
+            System.out.println("16. Verify Email");
+            System.out.println("17. Toggle Account Privacy");
+            System.out.println("18. Manage Posts");
+            System.out.println("19. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -319,17 +353,86 @@ public class Main {
         }
     }
 
+    //support centre
     private static void createSupportTicket() {
         System.out.println("\n=== Create Support Ticket ===");
         System.out.print("Enter User ID: ");
-        String userId = scanner.nextLine();
+        String userId = scanner.nextLine().trim();
         System.out.print("Enter Category: ");
-        String category = scanner.nextLine();
+        String category = scanner.nextLine().trim();
         System.out.print("Enter Description: ");
-        String description = scanner.nextLine();
-
-        String ticketId = supportCentreManager.createSupportTicket(userId, category, description);
+        String description = scanner.nextLine().trim();
+        System.out.print("Enter Attachment Path (leave blank if none): ");
+        String attachmentPath = scanner.nextLine().trim();
+    
+        // Validate inputs
+        if (userId.isEmpty() || category.isEmpty() || description.isEmpty()) {
+            System.out.println("Error: All fields are required. Ticket creation failed.");
+            return;
+        }
+    
+        String ticketId = supportCentreManager.createSupportTicket(userId, category, description, attachmentPath);
         System.out.println("Support ticket created with ID: " + ticketId);
+    }
+
+    private static void updateTicketStatus() {
+        System.out.println("\n=== Update Ticket Status ===");
+        System.out.print("Enter Ticket ID: ");
+        String ticketId = scanner.nextLine().trim();
+        System.out.print("Enter New Status (e.g., Open, In Progress, Closed): ");
+        String newStatus = scanner.nextLine().trim();
+    
+        if (newStatus.isEmpty()) {
+            System.out.println("Error: Status cannot be empty.");
+            return;
+        }
+    
+        if (supportCentreManager.updateTicketStatus(ticketId, newStatus)) {
+            System.out.println("Ticket status updated successfully.");
+        } else {
+            System.out.println("Ticket not found. Please check the Ticket ID and try again.");
+        }
+    }
+    
+    private static void answerTicket() {
+        System.out.println("\n=== Answer Support Ticket ===");
+        System.out.print("Enter Ticket ID: ");
+        String ticketId = scanner.nextLine().trim();
+        System.out.print("Enter your message: ");
+        String message = scanner.nextLine().trim();
+    
+        if (message.isEmpty()) {
+            System.out.println("Error: Response message cannot be empty.");
+            return;
+        }
+    
+        if (supportCentreManager.answerTicket(ticketId, message)) {
+            System.out.println("Your response has been recorded.");
+        } else {
+            System.out.println("Failed to record your response. Please try again.");
+        }
+    }
+    
+    private static void provideRealTimeAid() {
+        System.out.println("\n=== Real-Time User Assistance ===");
+        System.out.print("Enter the User ID of the person you want to assist: ");
+        String userId = scanner.nextLine();
+    
+        if (supportCentreManager.startRealTimeAid(sessionUsername, userId)) {
+            System.out.println("Real-time aid session started. Type 'exit' to end the session.");
+            while (true) {
+                System.out.print("You: ");
+                String message = scanner.nextLine();
+                if (message.equalsIgnoreCase("exit")) {
+                    System.out.println("Session ended.");
+                    supportCentreManager.endRealTimeAid(sessionUsername, userId);
+                    break;
+                }
+                supportCentreManager.sendMessage(sessionUsername, userId, message);
+            }
+        } else {
+            System.out.println("Failed to start a real-time aid session. Ensure the User ID is valid.");
+        }
     }
 
     // Notification centre
