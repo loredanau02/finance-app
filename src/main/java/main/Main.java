@@ -15,6 +15,8 @@ import main.posts.ViewPosts;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
@@ -143,6 +145,11 @@ public class Main {
                     accountManager.displayPublicUsers();
                     break;
                 case 23:
+                    if (isLoggedIn) {
+                        addPersonalNote();
+                    }
+                    break;
+                case 24:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -157,7 +164,7 @@ public class Main {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
             System.out.println("22. View Public Users");
-            System.out.println("23. Exit");
+            System.out.println("24. Exit");
         } else {
             System.out.println("3. Add asset");
             System.out.println("4. Get assets");
@@ -178,7 +185,8 @@ public class Main {
             System.out.println("19. Manage Posts");
             System.out.println("20. View Posts");
             System.out.println("22. View Public Users");
-            System.out.println("23. Exit");
+            System.out.println("23. Add Personal Note");
+            System.out.println("24. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -672,6 +680,30 @@ public class Main {
             System.out.println("Rating submitted successfully.");
         } else {
             System.out.println("Failed to submit rating.");
+        }
+    }
+
+    private static void addPersonalNote() {
+        System.out.println("\n=== Add Personal Note ===");
+        System.out.print("Enter your note: ");
+        String note = scanner.nextLine();
+        
+        Profile profile = accountManager.getProfile(sessionUsername);
+        if (profile != null) {
+            String notesFile = "notes.csv";
+            try (FileWriter writer = new FileWriter(notesFile, true)) {
+                writer.append(sessionUsername)
+                     .append(",")
+                     .append(profile.getEmail())
+                     .append(",")
+                     .append(note.replace(",", ";"))
+                     .append("\n");
+                System.out.println("Note saved successfully!");
+            } catch (IOException e) {
+                System.err.println("Error saving note: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Profile not found.");
         }
     }
 }
