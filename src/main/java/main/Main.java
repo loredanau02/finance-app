@@ -50,96 +50,99 @@ public class Main {
                     }
                     break;
                 case 3:
-                    if (!isLoggedIn) {
-                        accountManager.displayPublicUsers();
-                    }
-                    break;
-                case 4:
                     if (isLoggedIn) {
                         addAsset();
                     }
                     break;
-                case 5:
+                case 4:
                     if (isLoggedIn) {
                         getAssets();
                     }
                     break;
-                case 6:
+                case 5:
                     if (isLoggedIn) {
                         getAsset();
                     }
                     break;
-                case 7:
+                case 6:
                     if (isLoggedIn) {
                         updateAsset();
                     }
                     break;
-                case 8:
+                case 7:
                     if (isLoggedIn) {
                         removeAsset();
                     }
                     break;
-                case 9:
+                case 8:
                     if (isLoggedIn) {
                         createSupportTicket();
                     }
                     break;
-                case 10:
+                case 9:
                     if (isLoggedIn) {
                         updateTicketStatus();
                     }
                     break;
-                case 11:
+                case 10:
                     if (isLoggedIn) {
                         answerTicket();
                     }
                     break;
+                case 11:
+                    if (isLoggedIn) {
+                        provideRealTimeAid();
+                    }
+                    break;
                 case 12:
-                if (isLoggedIn) {
-                    provideRealTimeAid();
-                }
-                break;
-                case 13:
                     if (isLoggedIn) {
                         manageNotifications();
                     }
                     break;
-                case 14:
+                case 13:
                     if (isLoggedIn) {
                         rateTicket();
                     }
                     break;
-                case 15:
+                case 14:
                     if (isLoggedIn) {
                         updateUserInfo();
                     }
                     break;
-                case 16:
+                case 15:
                     if (isLoggedIn) {
                         displayUserProfile();
                     }
                     break;
-                case 17:
+                case 16:
                     if (isLoggedIn) {
                         deleteAccount();
                     }
                     break;
-                case 18:
+                case 17:
                     if (isLoggedIn) {
                         toggleAccountPrivacy();
                     }
                     break;
-                case 19:
+                case 18:
                     if (isLoggedIn) {
                         verifyEmail();
                     }
                     break;
-                case 20:
+                case 19:
                     if (isLoggedIn) {
                         handlePostsManagement();
                     }
                     break;
-                case 21:
+                case 20:
+                    if (isLoggedIn) {
+                        handlePostsViewing();
+                    }
+                    break;
+                case 22:
+                    accountManager.displayPublicUsers();
+                    break;
+                case 23:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -153,27 +156,29 @@ public class Main {
         if (!isLoggedIn) {
             System.out.println("1. Register new account");
             System.out.println("2. Login");
-            System.out.println("3. View Public Users");
-            System.out.println("20. Exit");
+            System.out.println("22. View Public Users");
+            System.out.println("23. Exit");
         } else {
-            System.out.println("4. Add asset");
-            System.out.println("5. Get assets");
-            System.out.println("6. Get asset");
-            System.out.println("7. Update asset");
-            System.out.println("8. Remove asset");
-            System.out.println("9. Create Support Ticket");
-            System.out.println("10. Update Ticket Status");
-            System.out.println("11. Answer Support Ticket");
-            System.out.println("12. Provide Real-Time Aid");
-            System.out.println("13. Manage Notifications");
-            System.out.println("14. Rate Support Ticket");
-            System.out.println("15. Update Personal Information");
-            System.out.println("16. View Profile");
-            System.out.println("17. Delete Account");
-            System.out.println("18. Toggle Account Privacy");
-            System.out.println("19. Verify Email");
-            System.out.println("20. Manage Posts");
-            System.out.println("21. Exit");
+            System.out.println("3. Add asset");
+            System.out.println("4. Get assets");
+            System.out.println("5. Get asset");
+            System.out.println("6. Update asset");
+            System.out.println("7. Remove asset");
+            System.out.println("8. Create Support Ticket");
+            System.out.println("9. Update Ticket Status");
+            System.out.println("10. Answer Support Ticket");
+            System.out.println("11. Provide Real-Time Aid");
+            System.out.println("12. Manage Notifications");
+            System.out.println("13. Rate Support Ticket");
+            System.out.println("14. Update Personal Information");
+            System.out.println("15. View Profile");
+            System.out.println("16. Delete Account");
+            System.out.println("17. Toggle Account Privacy");
+            System.out.println("18. Verify Email");
+            System.out.println("19. Manage Posts");
+            System.out.println("20. View Posts");
+            System.out.println("22. View Public Users");
+            System.out.println("23. Exit");
         }
         System.out.print("Enter your choice: ");
     }
