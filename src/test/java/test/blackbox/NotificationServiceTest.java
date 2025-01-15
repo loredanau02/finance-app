@@ -1,14 +1,16 @@
-package main.notification;
-import org.junit.Before;
-import org.junit.Test;
+package test.blackbox;
+
+import main.notifications.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.List;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NotificationServiceTest {
     private NotificationService notificationService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         // Ensure the CSV file used for persistence is cleared before each test to avoid interference between tests.
         File file = new File("notifications.csv");
