@@ -1,4 +1,4 @@
-package test.portfolio;
+package test.portfolio.whitebox;
 
 import main.portfolio.Portfolio;
 import main.portfolio.PortfolioManager;
