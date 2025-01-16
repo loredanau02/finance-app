@@ -10,7 +10,10 @@ import java.util.UUID;
 
 public class SupportCentreManager {
 
-    private static final String TICKETS_FILE = "support_center/data/support_tickets.csv";
+    private static final String TICKETS_FILE       = "supportcenter/data/support_tickets.csv";
+    private static final String RESPONSES_FILE     = "supportcenter/data/ticket_responses.csv";
+    private static final String RATINGS_FILE       = "supportcenter/data/support_ticket_ratings.csv";
+    private static final String REALTIME_CHATS     = "supportcenter/data/real_time_chats.csv";    
 
     public String createSupportTicket(String userId, String category, String description, String attachmentPath) {
         String ticketId = UUID.randomUUID().toString();
@@ -72,8 +75,7 @@ public class SupportCentreManager {
     }
     
     public boolean answerTicket(String ticketId, String message) {
-        String messagesFile = "data/ticket_responses.csv";
-        try (FileWriter writer = new FileWriter(messagesFile, true)) {
+        try (FileWriter writer = new FileWriter(RESPONSES_FILE, true)) {
             writer.append(ticketId).append(",").append(message).append("\n");
             return true;
         } catch (IOException e) {
@@ -88,8 +90,7 @@ public class SupportCentreManager {
     }
     
     public void sendMessage(String fromId, String toId, String message) {
-        String chatLogFile = "data/real_time_chats.csv";
-        try (FileWriter writer = new FileWriter(chatLogFile, true)) {
+        try (FileWriter writer = new FileWriter(REALTIME_CHATS, true)) {
             writer.append(fromId).append(",").append(toId).append(",").append(message).append("\n");
             System.out.println("Message sent to " + toId + ": " + message);
         } catch (IOException e) {
@@ -106,16 +107,15 @@ public class SupportCentreManager {
             return false;
         }
     
-        String ratingsFile = "data/ticket_ratings.csv";
-        try (FileWriter writer = new FileWriter(ratingsFile, true)) {
+        try (FileWriter writer = new FileWriter(RATINGS_FILE, true)) {
             writer.append(ticketId)
-                 .append(",")
-                 .append(userId)
-                 .append(",")
-                 .append(String.valueOf(rating))
-                 .append(",")
-                 .append(feedback)
-                 .append("\n");
+                  .append(",")
+                  .append(userId)
+                  .append(",")
+                  .append(String.valueOf(rating))
+                  .append(",")
+                  .append(feedback)
+                  .append("\n");
             return true;
         } catch (IOException e) {
             System.err.println("Error saving ticket rating: " + e.getMessage());
@@ -128,7 +128,7 @@ public class SupportCentreManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(TICKETS_FILE))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] fields = line.split(",", -1); // Handle empty fields
+                String[] fields = line.split(",", -1);
                 SupportTicket ticket = new SupportTicket(
                     fields[0], fields[1], fields[2], fields[3], fields[4]
                 );
