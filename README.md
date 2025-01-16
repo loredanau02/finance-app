@@ -10,29 +10,30 @@ Finance App is a financial management system designed to help users track their 
 - Support center with ticket management
 - Secure credential storage
 - Unit and integration tests using JUnit
+  
+Project Structure
+📂 src - Main source code directory
+    📂 main/java/main - Core application logic
+    📂 test/java/test - Unit and integration tests
 
-## Project Structure
-📂 **src** - Main source code directory  
-   📂 **main/java/main** - Core application logic  
-   📂 **test/java/test** - Unit and integration tests  
+📂 Data Files - CSV files for storing financial data
+    📄 credentials.csv - Secure user credentials storage
+    📄 investment.csv - Investment-related data
+    📄 notes.csv - User notes and transactions
+    📄 notifications.csv - Notification and alert logs
+    📄 prices.csv - Asset price data
 
-📂 **Data Files** - CSV files for storing financial data  
-   📄 `credentials.csv` - Secure user credentials storage  
-   📄 `investment.csv` - Investment-related data  
-   📄 `notes.csv` - User notes and transactions  
-   📄 `notifications.csv` - Notification and alert logs  
-   📄 `prices.csv` - Asset price data  
+📂 Modules
+    📂 notifications - Notification management
+    📂 portfolio - Portfolio evaluation and visualization
+    📂 posts - User-generated content and financial insights
+    📂 profilemanagement - User profile and account settings
+    📂 supportcenter - Customer support ticket management
 
-📂 **Modules**  
-   📂 `notifications` - Notification management  
-   📂 `portfolio` - Portfolio evaluation and visualization  
-   📂 `posts` - User-generated content and financial insights  
-   📂 `profilemanagement` - User profile and account settings  
-   📂 `supportcenter` - Customer support ticket management  
+📂 Testing
+    📂 blackbox - Black-box testing cases
+    📂 whitebox - White-box testing cases
 
-📂 **Testing**  
-   📂 `blackbox` - Black-box testing cases  
-   📂 `whitebox` - White-box testing cases  
 
 ## Dependencies
 - Java (JDK 11+)
