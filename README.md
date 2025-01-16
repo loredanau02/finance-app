@@ -10,6 +10,7 @@ Finance App is a financial management system designed to help users track their 
 - Support center with ticket management
 - Secure credential storage
 - Unit and integration tests using JUnit
+
   
 Project Structure
 📂 src - Main source code directory
