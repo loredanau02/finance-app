@@ -47,9 +47,6 @@ public class SupportCentreBlackBoxTest {
         restoreFile(RATINGS_FILE, backupRatings);
     }
 
-    /* ---------------------------
-       CREATE SUPPORT TICKET TESTS
-       --------------------------- */
     @Test
     public void testCreateSupportTicket_Success() throws IOException {
         String userId = "user123";
@@ -83,9 +80,6 @@ public class SupportCentreBlackBoxTest {
         }
     }
 
-    /* ---------------------------
-       UPDATE TICKET STATUS TESTS
-       --------------------------- */
     @Test
     public void testUpdateTicketStatus_Success() throws IOException {
         String ticketId = supportCentreManager.createSupportTicket(
@@ -104,9 +98,6 @@ public class SupportCentreBlackBoxTest {
         assertFalse("Should not update since ticket doesn't exist", updated);
     }
 
-    /* ---------------------------
-       ANSWER TICKET TESTS
-       --------------------------- */
     @Test
     public void testAnswerTicket_Success() throws IOException {
         String ticketId = supportCentreManager.createSupportTicket(
@@ -129,9 +120,6 @@ public class SupportCentreBlackBoxTest {
         assertFalse("Should fail to record empty message", answered);
     }
 
-    /* ---------------------------
-       RATING TICKET TESTS
-       --------------------------- */
     @Test
     public void testRateTicket_Success() throws IOException {
         String ticketId = supportCentreManager.createSupportTicket(
@@ -156,9 +144,6 @@ public class SupportCentreBlackBoxTest {
         assertFalse("Rating of 6 (out of 1-5) should fail", rated);
     }
 
-    /* ---------------------------
-       REAL-TIME AID TESTS
-       --------------------------- */
     @Test
     public void testStartRealTimeAid_ValidUser() {
         boolean started = supportCentreManager.startRealTimeAid("specialistID", "userID");
@@ -175,9 +160,6 @@ public class SupportCentreBlackBoxTest {
                    chatLog.contains("specialistID,someUser,Hello there!"));
     }
 
-    /* ======================
-       HELPER METHODS
-       ====================== */
     private String backupFile(String filePath) throws IOException {
         File f = new File(filePath);
         if (!f.exists()) return "";
