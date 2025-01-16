@@ -1,7 +1,5 @@
 package main.portfolio;
 
-import main.profilemanagment.Profile;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,15 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PortfolioManager {
-    private Map<String, Portfolio> portfolios; // Map[username]portfolio
+    private Map<String, Portfolio> portfolios; // map[username]portfolio
     private Map<String, Float> prices; // map[asset_name]price
 
     public PortfolioManager() {
         this.portfolios = new HashMap<>();
         this.prices = new HashMap<>();
-        System.out.println("Loading prices...");
         loadFromCSV();
-        System.out.println("Finished loading prices.");
     }
 
     private void loadFromCSV() {
@@ -30,7 +26,6 @@ public class PortfolioManager {
                         String asset = data[0].trim();
                         Float price = Float.parseFloat(data[1].trim());
                         prices.put(asset, price);
-                        System.out.println(asset + ", " + price);
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid price format for asset: " + data[0]);
                     }
@@ -43,20 +38,12 @@ public class PortfolioManager {
         }
     }
 
-    private void initializeDefaultPrices() {
-        // Price adapter should fetch prices from a third-party provider.
-        // To test the system, and keep it consistent, we populate default prices.
-        prices.put("AAPL", 150.25f);   // Apple Inc.
-        prices.put("GOOGL", 2750.50f); // Alphabet Inc.
-        prices.put("AMZN", 3400.75f);  // Amazon.com Inc.
-        prices.put("MSFT", 299.10f);   // Microsoft Corporation
-        prices.put("TSLA", 725.60f);   // Tesla Inc.
-        prices.put("NFLX", 590.40f);   // Netflix Inc.
-        prices.put("NVDA", 220.15f);   // NVIDIA Corporation
-    }
-
     public Float GetPrice(String assetName) {
         return prices.get(assetName);
+    }
+
+    public Map<String, Float> GetPrices() {
+        return prices;
     }
 
     public boolean AddUser(String username) {
@@ -79,44 +66,59 @@ public class PortfolioManager {
         return portfolios.get(username);
     }
 
-    public boolean AddAsset(String username, String assetName, Float amount, Float aquisitionPrice) {
-        Portfolio portfolio = portfolios.get(username);
-        if (portfolio == null) {
-            return false;
-        }
-        return portfolio.AddAsset(assetName, amount, aquisitionPrice);
-    }
-
-    public boolean UpdateAssetAmount(String username, String assetName, Float amount) {
-        Portfolio portfolio = portfolios.get(username);
-        if (portfolio == null) {
-            return false;
-        }
-        return portfolio.UpdateAssetAmount(assetName, amount);
-    }
-
-    public Asset GetAsset(String username, String assetName) {
+    public Float GetTotalValue(String username) {
         Portfolio portfolio = portfolios.get(username);
         if (portfolio == null) {
             return null;
         }
-        return portfolio.GetAsset(assetName);
+        Map<String, Asset> assets = portfolio.GetAssets();
+        if (assets == null || assets.isEmpty()) {
+            return null;
+        }
+        float totalValue = 0.0f;
+        for (Map.Entry<String, Asset> entry : assets.entrySet()) {
+            String assetName = entry.getKey();
+            Float price = prices.get(assetName);
+            if (price == null) {
+                price = entry.getValue().GetAcquisitionPrice();
+            }
+            totalValue += entry.getValue().GetValue(price);
+        }
+        return totalValue;
     }
 
-    public Map<String, Asset> GetAssets(String username) {
+    public Map<String, Float> GetPieChart(String username) {
         Portfolio portfolio = portfolios.get(username);
         if (portfolio == null) {
             return null;
         }
-        return portfolio.GetAssets();
-    }
 
-    public boolean RemoveAsset(String username, String assetName) {
-        Portfolio portfolio = portfolios.get(username);
-        if (portfolio == null) {
-            return false;
+        Map<String, Asset> assets = portfolio.GetAssets();
+        if (assets == null || assets.isEmpty()) {
+            return null;
         }
-        return portfolio.RemoveAsset(assetName);
+
+        Float totalValue = GetTotalValue(username);
+        if (totalValue == null) {
+            return null;
+        }
+
+        Map<String, Float> chartData = new HashMap<>();
+        for (Map.Entry<String, Asset> entry : assets.entrySet()) {
+            String assetName = entry.getKey();
+            Asset asset = entry.getValue();
+
+            Float price = prices.get(assetName);
+            if (price == null) {
+                price = asset.GetAcquisitionPrice();
+            }
+
+            Float assetValue = asset.GetValue(price);
+            float percentage = (assetValue / totalValue) * 100;
+            chartData.put(assetName, percentage);
+        }
+
+        return chartData;
     }
 }
 

@@ -170,6 +170,14 @@ public class Main {
                     getPrice();
                     break;
                 case 28:
+                    getPrices();
+                    break;
+                case 29:
+                    if (isLoggedIn) {
+                        getPieChart();
+                    }
+                    break;
+                case 30:
                     System.out.println("Goodbye!");
                     return;
                 default:
@@ -185,7 +193,8 @@ public class Main {
             System.out.println("2. Login");
             System.out.println("22. View Public Users");
             System.out.println("27. Get Asset Price");
-            System.out.println("28. Exit");
+            System.out.println("28. Get Asset Prices");
+            System.out.println("30. Exit");
         } else {
             System.out.println("3. Add asset");
             System.out.println("4. Get assets");
@@ -211,7 +220,9 @@ public class Main {
             System.out.println("25. Mark Investment as Favourite");
             System.out.println("26. Remove Investment From Favourites");
             System.out.println("27. Get Asset Price");
-            System.out.println("28. Exit");
+            System.out.println("28. Get Asset Prices");
+            System.out.println("29. Get Pie-Chart");
+            System.out.println("30. Exit");
         }
         System.out.print("Enter your choice: ");
     }
@@ -303,7 +314,7 @@ public class Main {
 
         Float acquisitionPrice = null;
 
-        System.out.print("Enter asset amount: ");
+        System.out.print("Enter price: ");
         String acquisitionPriceStr = scanner.nextLine().trim();
         try {
             acquisitionPrice = Float.parseFloat(acquisitionPriceStr);
@@ -328,7 +339,25 @@ public class Main {
         Float price = portfolioManager.GetPrice(assetName);
         System.out.println("\nAsset Details:");
         System.out.printf("%-15s: %s%n", "Asset", assetName);
-        System.out.printf("%-15s: %.2f%n", "Amount", price);
+        System.out.printf("%-15s: %.2f%n", "Price", price);
+    }
+
+    private static void getPrices() {
+        System.out.println("\n=== Asset Prices ===");
+
+        Map<String, Float> prices = portfolioManager.GetPrices();
+        if (prices != null && !prices.isEmpty()) {
+            System.out.printf("%-10s %-10s%n", "Asset", "Price");
+            System.out.printf("%-10s %-10s%n", "-----", "------");
+
+            for (Map.Entry<String, Float> entry : prices.entrySet()) {
+                String asset = entry.getKey();
+                Float price = entry.getValue();
+                System.out.printf("%-10s %-10.2f%n", asset, price);
+            }
+        } else {
+            System.out.println("No prices available.");
+        }
     }
 
     private static void getAsset() {
@@ -339,9 +368,17 @@ public class Main {
         Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
         Asset asset = portfolio.GetAsset(assetName);
         if (asset != null) {
+            Float price = portfolioManager.GetPrice(assetName);
+            if (price == null) {
+                price = asset.GetAcquisitionPrice();
+            }
             System.out.println("\nAsset Details:");
             System.out.printf("%-15s: %s%n", "Asset Name", assetName);
             System.out.printf("%-15s: %.2f%n", "Amount", asset.GetAmount());
+            System.out.printf("%-15s: %.2f%n", "Entry price", asset.GetAcquisitionPrice());
+            System.out.printf("%-15s: %.2f%n", "Cost", asset.GetInitialCost());
+            System.out.printf("%-15s: %.2f%n", "Current value", asset.GetValue(price));
+            System.out.printf("%-15s: %.2f%n", "Profit & Loss", asset.GetPnl(price));
         } else {
             System.out.println("Asset not found.");
         }
@@ -351,17 +388,27 @@ public class Main {
         System.out.println("\n=== Updating an asset from user's portfolio ===");
         System.out.print("Enter asset name: ");
         String assetName = scanner.nextLine();
+        System.out.print("Enter action type (buy/sell): ");
+        String action = scanner.nextLine();
         Float assetAmount = null;
-        System.out.print("Enter new asset amount: ");
+        System.out.print("Enter order amount: ");
         String assetAmountStr = scanner.nextLine().trim();
         try {
             assetAmount = Float.parseFloat(assetAmountStr);
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a numeric value for the asset amount.");
+            System.out.println("Invalid input. Please enter a numeric value for the order amount.");
+        }
+        Float price = null;
+        System.out.print("Enter order price: ");
+        String priceStr = scanner.nextLine().trim();
+        try {
+            price = Float.parseFloat(priceStr);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a numeric value for the order price.");
         }
 
         Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
-        if (portfolio.UpdateAssetAmount(assetName, assetAmount)) {
+        if (portfolio.UpdateAsset(assetName, assetAmount, action, price)) {
             System.out.println("Asset updated successfully!");
         } else {
             System.out.println("Asset does not exists!");
@@ -387,20 +434,44 @@ public class Main {
         Portfolio portfolio = portfolioManager.GetUserPortfolio(sessionUsername);
         Map<String, Asset> assets = portfolio.GetAssets();
         if (assets != null && !assets.isEmpty()) {
-            System.out.printf("%-20s %-10s%n", "Asset Name", "Amount");
-            System.out.printf("%-20s %-10s%n", "----------", "------");
+            System.out.printf("%-20s %-10s %-10s %-10s%n", "Asset Name", "Amount", "Value", "PnL");
+            System.out.printf("%-20s %-10s %-10s %-10s%n", "----------", "------","------","------");
 
             for (Map.Entry<String, Asset> entry : assets.entrySet()) {
                 String assetName = entry.getKey();
-                Float amount = entry.getValue().GetAmount();
-                System.out.printf("%-20s %-10.2f%n", assetName, amount);
+                Float price = portfolioManager.GetPrice(assetName);
+                Asset asset = entry.getValue();
+                if (price == null) {
+                    price = asset.GetAcquisitionPrice();
+                }
+                System.out.printf("%-20s %-10.2f %-10.2f %-10.2f%n", assetName, asset.GetAmount(), asset.GetValue(price), asset.GetPnl(price));
             }
+            System.out.printf("%-20s %-10.2f%n", "Total value:", portfolioManager.GetTotalValue(sessionUsername));
         } else {
             System.out.println("Your portfolio is currently empty.");
         }
     }
 
-    //support centre
+    private static void getPieChart() {
+        System.out.println("\n=== Your Investments Pie Chart ===");
+
+        Map<String, Float> chart = portfolioManager.GetPieChart(sessionUsername);
+        if (chart != null && !chart.isEmpty()) {
+            System.out.printf("%-20s %-10s%n", "Asset", "Percentage");
+            System.out.printf("%-20s %-10s%n", "-----", "------");
+
+            for (Map.Entry<String, Float> entry : chart.entrySet()) {
+                String asset = entry.getKey();
+                Float percentage = entry.getValue();
+                System.out.printf("%-20s %-10.2f %% %n", asset, percentage);
+            }
+            System.out.printf("%-20s %-10.2f%n", "Total value:", portfolioManager.GetTotalValue(sessionUsername));
+        } else {
+            System.out.println("Your portfolio is currently empty.");
+        }
+    }
+
+    // Support centre
     private static void createSupportTicket() {
         System.out.println("\n=== Create Support Ticket ===");
         System.out.print("Enter User ID: ");
