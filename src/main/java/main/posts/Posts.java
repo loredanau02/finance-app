@@ -22,8 +22,9 @@ public class Posts {
     }
 
     // Delete a post
-    public boolean deletePost(int postId) {
-        if (posts.containsKey(postId)) {
+    public boolean deletePost(int postId, String username) {
+        Post post = posts.get(postId);
+        if (post != null && post.getAuthor().equals(username)) {
             posts.remove(postId);
             return true;
         }
@@ -31,9 +32,9 @@ public class Posts {
     }
 
     // Like a post
-    public boolean likePost(int postId) {
+    public boolean likePost(int postId, String username) {
         Post post = posts.get(postId);
-        if (post != null) {
+        if (post != null && (!post.isPrivate() || post.getAuthor().equals(username))) {
             post.addLike();
             return true;
         }
@@ -41,9 +42,9 @@ public class Posts {
     }
 
     // Unlike a post
-    public boolean unlikePost(int postId) {
+    public boolean unlikePost(int postId, String username) {
         Post post = posts.get(postId);
-        if (post != null) {
+        if (post != null && (!post.isPrivate() || post.getAuthor().equals(username))) {
             post.removeLike();
             return true;
         }
@@ -51,9 +52,9 @@ public class Posts {
     }
 
     // Report a post
-    public boolean reportPost(int postId, String reason) {
+    public boolean reportPost(int postId, String reason, String username) {
         Post post = posts.get(postId);
-        if (post != null) {
+        if (post != null && (!post.isPrivate() || post.getAuthor().equals(username))) {
             post.addReport(reason);
             return true;
         }
@@ -61,9 +62,9 @@ public class Posts {
     }
 
     // Update a post's content
-    public boolean updatePostContent(int postId, String newContent) {
+    public boolean updatePostContent(int postId, String newContent, String username) {
         Post post = posts.get(postId);
-        if (post != null) {
+        if (post != null && post.getAuthor().equals(username)) {
             post.setContent(newContent);
             return true;
         }
@@ -71,13 +72,23 @@ public class Posts {
     }
 
     // Retrieve all posts
-    public ArrayList<Post> getAllPosts() {
-        return new ArrayList<>(posts.values());
+    public ArrayList<Post> getAllPosts(String viewerUsername) {
+        ArrayList<Post> visiblePosts = new ArrayList<>();
+        for (Post post : posts.values()) {
+            if (!post.isPrivate() || post.getAuthor().equals(viewerUsername)) {
+                visiblePosts.add(post);
+            }
+        }
+        return visiblePosts;
     }
 
     // Retrieve a single post by ID
-    public Post getPost(int postId) {
-        return posts.get(postId);
+    public Post getPost(int postId, String viewerUsername) {
+        Post post = posts.get(postId);
+        if (post != null && (!post.isPrivate() || post.getAuthor().equals(viewerUsername))) {
+            return post;
+        }
+        return null;
     }
 
     // Inner class for a Post
@@ -182,31 +193,31 @@ public class Posts {
 
             switch (choice) {
                 case "1":
-                    createPostFromInput(scanner);
+                    createPostFromInput(scanner, username);
                     break;
                 case "2":
-                    displayAllPosts();
+                    displayAllPosts(username);
                     break;
                 case "3":
-                    likePostFromInput(scanner);
+                    likePostFromInput(scanner, username);
                     break;
                 case "4":
-                    unlikePostFromInput(scanner);
+                    unlikePostFromInput(scanner, username);
                     break;
                 case "5":
-                    reportPostFromInput(scanner);
+                    reportPostFromInput(scanner, username);
                     break;
                 case "6":
-                    updatePostFromInput(scanner);
+                    updatePostFromInput(scanner, username);
                     break;
                 case "7":
-                    deletePostFromInput(scanner);
+                    deletePostFromInput(scanner, username);
                     break;
                 case "8":
-                    addLabelToPost(scanner);
+                    addLabelToPost(scanner, username);
                     break;
                 case "9":
-                    removeLabelFromPost(scanner);
+                    removeLabelFromPost(scanner, username);
                     break;
                 case "10":
                     addCommentToPost(scanner);
@@ -226,20 +237,18 @@ public class Posts {
         }
     }
 
-    private void createPostFromInput(Scanner scanner) {
+    private void createPostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post content: ");
         String content = scanner.nextLine();
-        System.out.print("Enter author name: ");
-        String author = scanner.nextLine();
         
-        int postId = createPost(content, author);
+        int postId = createPost(content, username);
         System.out.println("Post created successfully with ID: " + postId);
         
         System.out.print("Would you like to add labels to this post? (y/n): ");
         if (scanner.nextLine().trim().toLowerCase().startsWith("y")) {
             System.out.print("Enter labels (comma-separated): ");
             String[] labels = scanner.nextLine().split(",");
-            Post post = getPost(postId);
+            Post post = getPost(postId, username);
             for (String label : labels) {
                 post.addLabel(label.trim().toLowerCase());
             }
@@ -247,114 +256,111 @@ public class Posts {
         }
     }
 
-    private void displayAllPosts() {
-        ArrayList<Post> allPosts = getAllPosts();
+    private void displayAllPosts(String username) {
+        ArrayList<Post> allPosts = getAllPosts(username);
         if (allPosts.isEmpty()) {
             System.out.println("No posts available.");
             return;
         }
         
         for (Post post : allPosts) {
-            System.out.println("\n------------------");
-            System.out.println("Post ID: " + post.getId());
-            System.out.println("Author: " + post.getAuthor());
-            System.out.println("Content: " + post.getContent());
-            System.out.println("Likes: " + post.getLikes());
-            System.out.println("Labels: " + String.join(", ", post.getLabels()));
-            System.out.println("Reports: " + post.getReports().size());
-            
-            // Display comments for this post
-            ViewPosts viewPosts = new ViewPosts(this);
-            ArrayList<Comment> postComments = viewPosts.getCommentsForPost(post.getId());
-            if (postComments != null && !postComments.isEmpty()) {
-                System.out.println("\nComments:");
-                for (Comment comment : postComments) {
-                    System.out.println(comment.toString());
-                }
-            }
-            System.out.println("------------------");
+            displayPost(post);
         }
     }
 
-    private void likePostFromInput(Scanner scanner) {
+    private void displayPost(Post post) {
+        System.out.println("\n------------------");
+        System.out.println("Post ID: " + post.getId());
+        System.out.println("Author: " + post.getAuthor());
+        System.out.println("Content: " + post.getContent());
+        System.out.println("Likes: " + post.getLikes());
+        System.out.println("Labels: " + String.join(", ", post.getLabels()));
+        System.out.println("Privacy: " + (post.isPrivate() ? "Private" : "Public"));
+        if (!post.getReports().isEmpty()) {
+            System.out.println("Reports: " + post.getReports().size());
+        }
+        System.out.println("------------------");
+    }
+
+    private void likePostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post ID to like: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            if (likePost(postId)) {
+            if (likePost(postId, username)) {
                 System.out.println("Post liked successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to like it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void unlikePostFromInput(Scanner scanner) {
+    private void unlikePostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post ID to unlike: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            if (unlikePost(postId)) {
+            if (unlikePost(postId, username)) {
                 System.out.println("Post unliked successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to unlike it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void reportPostFromInput(Scanner scanner) {
+    private void reportPostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post ID to report: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
             System.out.print("Enter reason for report: ");
             String reason = scanner.nextLine();
-            if (reportPost(postId, reason)) {
+            if (reportPost(postId, reason, username)) {
                 System.out.println("Post reported successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to report it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void updatePostFromInput(Scanner scanner) {
+    private void updatePostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post ID to update: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
             System.out.print("Enter new content: ");
             String newContent = scanner.nextLine();
-            if (updatePostContent(postId, newContent)) {
+            if (updatePostContent(postId, newContent, username)) {
                 System.out.println("Post updated successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to update it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void deletePostFromInput(Scanner scanner) {
+    private void deletePostFromInput(Scanner scanner, String username) {
         System.out.print("Enter post ID to delete: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            if (deletePost(postId)) {
+            if (deletePost(postId, username)) {
                 System.out.println("Post deleted successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to delete it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void addLabelToPost(Scanner scanner) {
+    private void addLabelToPost(Scanner scanner, String username) {
         System.out.print("Enter post ID: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            Post post = getPost(postId);
+            Post post = getPost(postId, username);
             
             if (post != null) {
                 System.out.print("Enter label to add: ");
@@ -362,18 +368,18 @@ public class Posts {
                 post.addLabel(label);
                 System.out.println("Label added successfully!");
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to modify it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
     }
 
-    private void removeLabelFromPost(Scanner scanner) {
+    private void removeLabelFromPost(Scanner scanner, String username) {
         System.out.print("Enter post ID: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            Post post = getPost(postId);
+            Post post = getPost(postId, username);
             
             if (post != null) {
                 if (post.getLabels().isEmpty()) {
@@ -391,7 +397,7 @@ public class Posts {
                     System.out.println("Label not found on this post.");
                 }
             } else {
-                System.out.println("Post not found.");
+                System.out.println("Post not found or you don't have permission to modify it.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
