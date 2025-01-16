@@ -1,12 +1,10 @@
 package main.portfolio;
 
-import main.profilemanagment.Profile;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class Portfolio {
-    private Map<String, Asset> assets; // map[asset_name]amount
+    private Map<String, Asset> assets; // map[asset]amount
 
     public Portfolio() {
         this.assets = new HashMap<>();
@@ -21,11 +19,10 @@ public class Portfolio {
         return true;
     }
 
-    public boolean UpdateAssetAmount(String assetName, Float amount) {
+    public boolean UpdateAsset(String assetName, Float amount, String side, Float price) {
         if (assets.containsKey(assetName)) {
             Asset asset = assets.get(assetName);
-            asset.SetAmount(amount);
-            return true;
+            return asset.AddOrder(amount, side, price);
         }
         return false;
     }
