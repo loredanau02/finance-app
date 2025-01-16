@@ -1,4 +1,4 @@
-package test.black_box;
+package test.blackbox;
 
 import main.supportcenter.SupportCentreManager;
 import main.supportcenter.SupportTicket;
