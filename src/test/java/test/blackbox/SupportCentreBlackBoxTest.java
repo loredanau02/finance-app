@@ -15,9 +15,9 @@ import java.util.List;
 public class SupportCentreBlackBoxTest {
 
     private SupportCentreManager supportCentreManager;
-    private final String TICKETS_FILE = "support_center/data/support_tickets.csv";
-    private final String RESPONSES_FILE = "data/ticket_responses.csv";
-    private final String RATINGS_FILE = "data/support_ticket_ratings.csv";
+    private final String TICKETS_FILE = "src/main/java/main/supportcenter/data/support_tickets.csv";
+    private final String RESPONSES_FILE = "src/main/java/main/supportcenter/data/ticket_responses.csv";
+    private final String RATINGS_FILE = "src/main/java/main/supportcenter/data/support_ticket_ratings.csv";
     
     private String backupTickets;
     private String backupResponses;
@@ -54,7 +54,8 @@ public class SupportCentreBlackBoxTest {
         String description = "App keeps crashing";
         String attachmentPath = "C:\\screenshots\\error.png";
 
-        String ticketId = supportCentreManager.createSupportTicket(userId, category, description, attachmentPath);
+        String ticketId = supportCentreManager.createSupportTicket(
+                userId, category, description, attachmentPath);
         assertNotNull("Ticket ID should be generated", ticketId);
         
         String fileContent = new String(Files.readAllBytes(Paths.get(TICKETS_FILE)));
@@ -125,6 +126,7 @@ public class SupportCentreBlackBoxTest {
         String ticketId = supportCentreManager.createSupportTicket(
             "userForRating", "Feedback", "No big issues", "");
 
+        // ticketId,userId,rating,feedback
         boolean rated = supportCentreManager.rateTicket(ticketId, "userForRating", 4, "Great help!");
         assertTrue("Should allow rating 4 with feedback", rated);
 
@@ -155,14 +157,18 @@ public class SupportCentreBlackBoxTest {
         supportCentreManager.startRealTimeAid("specialistID", "someUser");
         supportCentreManager.sendMessage("specialistID", "someUser", "Hello there!");
 
-        String chatLog = new String(Files.readAllBytes(Paths.get("data/real_time_chats.csv")));
-        assertTrue("Chat file should contain 'specialistID,someUser,Hello there!'",
-                   chatLog.contains("specialistID,someUser,Hello there!"));
+        String chatLog = new String(Files.readAllBytes(Paths.get("src/main/java/main/supportcenter/data/real_time_chats.csv")));
+        assertTrue(
+            "Chat file should contain 'specialistID,someUser,Hello there!'",
+            chatLog.contains("specialistID,someUser,Hello there!")
+        );
     }
 
     private String backupFile(String filePath) throws IOException {
         File f = new File(filePath);
-        if (!f.exists()) return "";
+        if (!f.exists()) {
+            return "";
+        }
         return new String(Files.readAllBytes(Paths.get(filePath)));
     }
 
