@@ -5,8 +5,8 @@ Finance App is a system related to financial management, which helps the user in
 
 ## Project Structure
  **src** - Main source code directory  
-    **main/java/main** - Core application logic  
-    **test/java/test** - Unit and integration tests  
+    -**main/java/main** - Core application logic  
+    -**test/java/test** - Unit and integration tests  
 
  **Data Files** - CSV files for storing financial data  
     -`credentials.csv` - Secure user credentials storage  
