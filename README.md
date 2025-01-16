@@ -1,15 +1,7 @@
 # Finance App
 
 ## Overview
-Finance App is a financial management system designed to help users track their investments, manage notifications, and handle various financial operations efficiently.
-
-## Features
-- Portfolio evaluation with pie chart visualization
-- Investment tracking and management
-- User notifications and alerts
-- Support center with ticket management
-- Secure credential storage
-- Unit and integration tests using JUnit
+Finance App is a system related to financial management, which helps the user in tracking their investments and tending to their notifications and various financial operations.
 
 ## Project Structure
 📂 **src** - Main source code directory  
