@@ -18,11 +18,13 @@ import static org.junit.Assert.*;
 public class SupportCentreWhiteBoxTest {
 
     private SupportCentreManager manager;
-    private static final String TICKETS_FILE = "src/main/java/main/supportcenter/data/support_ticket_ratings.csv";
+    private static final String TICKETS_FILE = "src/main/java/main/supportcenter/data/support_tickets.csv";
     private String originalTicketsContent;
 
     @Before
     public void setUp() throws IOException {
+        originalTicketsContent = backupFile(TICKETS_FILE);
+
         manager = new SupportCentreManager();
         createEmptyFile(TICKETS_FILE);
         try (FileWriter fw = new FileWriter(TICKETS_FILE, true)) {

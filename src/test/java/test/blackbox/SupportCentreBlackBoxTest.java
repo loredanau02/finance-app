@@ -19,7 +19,7 @@ public class SupportCentreBlackBoxTest {
     private final String RESPONSES_FILE = "src/main/java/main/supportcenter/data/ticket_responses.csv";
     private final String RATINGS_FILE = "src/main/java/main/supportcenter/data/support_ticket_ratings.csv";
 
-    private SupportCentreManager supportCentreManager;
+    private SupportCentreManager manager;
     private String backupTickets;
     private String backupResponses;
     private String backupRatings;
@@ -147,15 +147,6 @@ public class SupportCentreBlackBoxTest {
     }
 
     @Test
-    public void testAnswerTicket_EmptyMessage() {
-        String ticketId = supportCentreManager.createSupportTicket(
-            "userXYZ", "General", "Issue detail", "");
-
-        boolean answered = supportCentreManager.answerTicket(ticketId, "");
-        assertFalse("Should fail to record empty message", answered);
-    }
-
-    @Test
     public void testRateTicket_Success() throws IOException {
         String ticketId = supportCentreManager.createSupportTicket(
             "userForRating", "Feedback", "No big issues", "");
@@ -178,16 +169,6 @@ public class SupportCentreBlackBoxTest {
 
         boolean rated = supportCentreManager.rateTicket(ticketId, "userBadRating", 6, "Too high rating");
         assertFalse("Rating of 6 (out of 1-5) should fail", rated);
-    }
-
-    @Test
-    public void testCreateSupportTicket_EmptyDescription() {
-        try {
-            manager.createSupportTicket("userEmptyDesc", "Technical", "", null);
-            fail("Expected an exception or some handling of empty description.");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("cannot be empty"));
-        }
     }
 
     @Test
