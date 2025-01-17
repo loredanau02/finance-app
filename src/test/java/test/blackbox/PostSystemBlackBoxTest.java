@@ -99,6 +99,110 @@ class PostSystemBlackBoxTest {
         );
     }
 
+    @Test
+    @DisplayName("Test post deletion")
+    void testPostDeletion() {
+        String username = "testUser";
+        int postId = posts.createPost("Test post", username);
+        
+        // Verify post exists
+        assertNotNull(posts.getPost(postId, username), "Post should exist before deletion");
+        
+        // Delete post
+        posts.deletePost(postId, username);
+        
+        // Verify post is deleted
+        assertNull(posts.getPost(postId, username), "Post should be null after deletion");
+    }
+
+    @Test
+    @DisplayName("Test unauthorized post deletion")
+    void testUnauthorizedPostDeletion() {
+        String author = "author";
+        String otherUser = "hacker";
+        int postId = posts.createPost("Test post", author);
+        
+        assertThrows(IllegalArgumentException.class, 
+            () -> posts.deletePost(postId, otherUser),
+            "Non-author should not be able to delete post"
+        );
+    }
+
+    @Test
+    @DisplayName("Test post editing")
+    void testPostEditing() {
+        String username = "testUser";
+        int postId = posts.createPost("Original content", username);
+        Posts.Post post = posts.getPost(postId, username);
+        
+        // Edit post
+        String newContent = "Updated content";
+        post.setContent(newContent);
+        
+        Posts.Post updatedPost = posts.getPost(postId, username);
+        assertEquals(newContent, updatedPost.getContent(), "Post content should be updated");
+    }
+
+    @Test
+    @DisplayName("Test multiple comments on post")
+    void testMultipleComments() {
+        String author = "author";
+        int postId = posts.createPost("Test post", author);
+        
+        // Add multiple comments
+        simulateInput("1\nauthor\nFirst comment\n");
+        viewPosts.addComment(new Scanner(System.in));
+        
+        simulateInput("1\nauthor\nSecond comment\n");
+        viewPosts.addComment(new Scanner(System.in));
+        
+        var comments = viewPosts.getCommentsForPost(postId);
+        assertAll("Multiple comments verification",
+            () -> assertEquals(2, comments.size(), "Should have two comments"),
+            () -> assertEquals("First comment", comments.get(0).getContent(), "First comment content should match"),
+            () -> assertEquals("Second comment", comments.get(1).getContent(), "Second comment content should match")
+        );
+    }
+
+    @Test
+    @DisplayName("Test invalid post retrieval")
+    void testInvalidPostRetrieval() {
+        String username = "testUser";
+        int invalidPostId = 99999;
+        
+        assertNull(posts.getPost(invalidPostId, username), 
+            "Getting non-existent post should return null");
+    }
+
+    @Test
+    @DisplayName("Test special characters in post content")
+    void testSpecialCharactersInPost() {
+        String username = "testUser";
+        String specialContent = "!@#$%^&*()_+ \n\t\"'";
+        
+        int postId = posts.createPost(specialContent, username);
+        Posts.Post post = posts.getPost(postId, username);
+        
+        assertEquals(specialContent, post.getContent(), 
+            "Post should preserve special characters");
+    }
+
+    @Test
+    @DisplayName("Test comment on private post")
+    void testCommentOnPrivatePost() {
+        String author = "author";
+        String commenter = "commenter";
+        int postId = posts.createPost("Private post", author);
+        Posts.Post post = posts.getPost(postId, author);
+        post.setPrivate(true);
+        
+        simulateInput(postId + "\n" + commenter + "\nAttempted comment\n");
+        viewPosts.addComment(new Scanner(System.in));
+        
+        var comments = viewPosts.getCommentsForPost(postId);
+        assertTrue(comments.isEmpty(), "Should not allow comments on private posts");
+    }
+
     private void simulateInput(String input) {
         System.setIn(new ByteArrayInputStream(input.getBytes()));
     }
