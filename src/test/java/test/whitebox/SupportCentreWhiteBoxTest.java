@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class SupportCentreWhiteBoxTest {
 
     private SupportCentreManager manager;
-    private static final String TICKETS_FILE = "support_center/data/support_tickets.csv";
+    private static final String TICKETS_FILE = "src/main/java/main/supportcenter/data/support_ticket_ratings.csv";
     private String originalTicketsContent;
 
     @Before
@@ -61,6 +61,43 @@ public class SupportCentreWhiteBoxTest {
         assertEquals("User mismatch",      "user2",   t2.getUserId());
         assertEquals("Attachment mismatch","/path/to/log", t2.getAttachmentPath());
         assertEquals("Status mismatch",    "Closed",  t2.getStatus());
+    }
+
+    @Test
+    public void testLoadTickets_MalformedLine() throws Exception {
+        try (FileWriter fw = new FileWriter(TICKETS_FILE, true)) {
+            fw.write("ABC123,user1,Billing,Need invoice,,Open,2025-01-10T10:00\n");
+            fw.write("MISSING,fields,huh\n");
+        }
+
+        Method loadTickets = SupportCentreManager.class.getDeclaredMethod("loadTickets");
+        loadTickets.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<SupportTicket> tickets = (List<SupportTicket>) loadTickets.invoke(manager);
+
+        assertEquals("Should load only 1 valid ticket from file", 1, tickets.size());
+        SupportTicket loaded = tickets.get(0);
+        assertEquals("ABC123", loaded.getTicketId());
+        assertEquals("Open", loaded.getStatus());
+    }
+
+    @Test
+    public void testLoadTickets_EmptyLines() throws Exception {
+        try (FileWriter fw = new FileWriter(TICKETS_FILE, true)) {
+            fw.write("XYZ789,userABC,Category,Desc,,Open,2025-01-12T12:00\n");
+            fw.write("\n");               // Completely empty line
+            fw.write("   \n");            // Whitespace-only line
+        }
+
+        Method loadTickets = SupportCentreManager.class.getDeclaredMethod("loadTickets");
+        loadTickets.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<SupportTicket> tickets = (List<SupportTicket>) loadTickets.invoke(manager);
+
+        assertEquals("Should ignore empty/whitespace lines, thus 1 ticket loaded", 1, tickets.size());
+        assertEquals("XYZ789", tickets.get(0).getTicketId());
     }
 
     @Test
