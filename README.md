@@ -26,6 +26,7 @@ mvn clean
 mvn package
 java -jar target/finance-app-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
+Please clean the credentais.csv file in the root level if any tests failss
 If you want to run just tests -> mvn clean test
 
 Import in Eclipse
