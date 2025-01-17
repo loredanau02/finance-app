@@ -22,14 +22,18 @@ public class Posts {
     }
 
     // Delete a post
-    public boolean deletePost(int postId, String username) {
-        Post post = posts.get(postId);
-        if (post != null && post.getAuthor().equals(username)) {
-            posts.remove(postId);
-            return true;
-        }
-        return false;
+public boolean deletePost(int postId, String username) {
+    Post post = posts.get(postId);
+    if (post == null) {
+        throw new IllegalArgumentException("Post not found");
     }
+    if (!post.getAuthor().equals(username)) {
+        throw new IllegalArgumentException("Unauthorized deletion attempt");
+    }
+    posts.remove(postId);
+    return true;
+}
+
 
     // Like a post
     public boolean likePost(int postId, String username) {

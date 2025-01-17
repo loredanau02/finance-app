@@ -129,12 +129,11 @@ public class ViewPosts {
         System.out.print("Enter post ID to comment on: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            System.out.print("Enter your username: ");
-            String author = scanner.nextLine();
+            Posts.Post post = postsManager.getPost(postId, null);
             
-            Posts.Post post = postsManager.getPost(postId, author);
-            
-            if (post != null) {
+            if (post != null && !post.isPrivate()) {
+                System.out.print("Enter your username: ");
+                String author = scanner.nextLine();
                 System.out.print("Enter your comment: ");
                 String content = scanner.nextLine();
                 
@@ -142,45 +141,42 @@ public class ViewPosts {
                 comments.computeIfAbsent(postId, k -> new ArrayList<>()).add(newComment);
                 System.out.println("Comment added successfully!");
             } else {
-                System.out.println("Post not found or you don't have permission to comment on it.");
+                System.out.println("Cannot comment on private or nonexistent posts.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid post ID format.");
         }
-    }
+    }    
 
     public void deleteComment(Scanner scanner) {
         System.out.print("Enter post ID: ");
         try {
             int postId = Integer.parseInt(scanner.nextLine());
-            System.out.print("Enter your username: ");
-            String username = scanner.nextLine();
+            Posts.Post post = postsManager.getPost(postId, null);
             
-            Posts.Post post = postsManager.getPost(postId, username);
-            if (post == null) {
-                System.out.println("Post not found or you don't have permission to view it.");
-                return;
-            }
-            
-            ArrayList<Comment> postComments = comments.get(postId);
-            if (postComments != null && !postComments.isEmpty()) {
-                System.out.println("\nComments for Post " + postId + ":");
-                for (Comment comment : postComments) {
-                    System.out.println(comment.toString());
+            if (post != null && !post.isPrivate()) {
+                ArrayList<Comment> postComments = comments.get(postId);
+                if (postComments != null && !postComments.isEmpty()) {
+                    System.out.println("\nComments for Post " + postId + ":");
+                    for (Comment comment : postComments) {
+                        System.out.println(comment.toString());
+                    }
+                    
+                    System.out.print("Enter comment ID to delete: ");
+                    int commentId = Integer.parseInt(scanner.nextLine());
+                    
+                    postComments.removeIf(comment -> comment.getId() == commentId);
+                    System.out.println("Comment deleted successfully!");
+                } else {
+                    System.out.println("No comments found for this post.");
                 }
-                
-                System.out.print("Enter comment ID to delete: ");
-                int commentId = Integer.parseInt(scanner.nextLine());
-                
-                postComments.removeIf(comment -> comment.getId() == commentId);
-                System.out.println("Comment deleted successfully!");
             } else {
-                System.out.println("No comments found for this post.");
+                System.out.println("Cannot modify comments on private or nonexistent posts.");
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID format.");
         }
-    }
+    }    
 
     private void displayAllPosts(String currentUser) {
         ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(currentUser);
@@ -244,9 +240,16 @@ public class ViewPosts {
     }
 
     // Add this new method to allow access to comments
-    public ArrayList<Comment> getCommentsForPost(int postId) {
-        return comments.get(postId);
+    // Retrieve comments for a specific post
+public ArrayList<Comment> getCommentsForPost(int postId) {
+    Posts.Post post = postsManager.getPost(postId, null); // Retrieve the post without checking the viewer's username
+    if (post == null || post.isPrivate()) {
+        // Return an empty list if the post is null or private
+        return new ArrayList<>();
     }
+    return comments.getOrDefault(postId, new ArrayList<>());
+}
+
 
     public void viewCommentsOnUserPosts(String author) {
         ArrayList<Posts.Post> allPosts = postsManager.getAllPosts(author);
